@@ -65,22 +65,22 @@
                                         
                                         %>
                                         <tr>
-                                            <td><%=betType.ToString()%></td>
-                                            <td><%=UIFunctions.FormatHorseNameForDisplay(userSelection.RaceDetail.PostPosition, userSelection.RaceDetail.Horse.Name)%></td>    
+                                            <td class="table-cell-inner-results-bet-type"><%=betType.ToString()%></td>
+                                            <td class="table-cell-inner-results-name"><%=UIFunctions.FormatHorseNameForDisplay(userSelection.RaceDetail.PostPosition, userSelection.RaceDetail.Horse.Name)%></td>    
                                             <%
                                                 if (payout == null)
                                                 {
                                                 %>
-                                                    <td>-</td>    
-                                                    <td>-</td>    
-                                                    <td>-</td>
+                                                    <td class="table-cell-inner-results-bet-amount">-</td>    
+                                                    <td class="table-cell-inner-results-bet-amount">-</td>    
+                                                    <td class="table-cell-inner-results-bet-amount">-</td>
                                             <%
                                                 }
                                                 else
                                                 {%>                                        
-                                                    <td><%=UIFunctions.GetBetTypeValueFromPayout(payoutCalc.WinAmount)%></td>    
-                                                    <td><%=UIFunctions.GetBetTypeValueFromPayout(payoutCalc.PlaceAmount)%></td>    
-                                                    <td><%=UIFunctions.GetBetTypeValueFromPayout(payoutCalc.ShowAmount)%></td>    
+                                                    <td class="table-cell-inner-results-bet-amount"><%=UIFunctions.GetBetTypeValueFromPayout(payoutCalc.WinAmount)%></td>    
+                                                    <td class="table-cell-inner-results-bet-amount"><%=UIFunctions.GetBetTypeValueFromPayout(payoutCalc.PlaceAmount)%></td>    
+                                                    <td class="table-cell-inner-results-bet-amount"><%=UIFunctions.GetBetTypeValueFromPayout(payoutCalc.ShowAmount)%></td>    
                                                 <%
                                                     raceTotal += payoutCalc.Total;
                                                 } %>
@@ -89,7 +89,7 @@
                                 </table>
                             </td>
                             <td><%=leagueRace.Weight%></td>
-                            <td><%=raceTotal%></td>
+                            <td><%=UIFunctions.GetBetTypeValueFromPayout(raceTotal)%></td>
                         </tr>
                         
             <% i++;
@@ -100,7 +100,7 @@
             %>
             <tr>
                 <td colspan="5" align="right">&nbsp;</td>
-                <td><b><%=runningTotal%></b></td>
+                <td><b><%=UIFunctions.GetBetTypeValueFromPayout(runningTotal)%></b></td>
             </tr>
             </table> 
         </fieldset>
