@@ -10,6 +10,7 @@ using HorseLeague.Models.Domain;
 using SharpArch.Core.PersistenceSupport;
 using SharpArch.Web.NHibernate;
 using HorseLeague.Helpers;
+using System.Web.Script.Serialization;
 
 namespace HorseLeague.Controllers
 {
@@ -148,6 +149,27 @@ namespace HorseLeague.Controllers
             
         }
 
+        public ActionResult ImportHorses(int id)
+        {
+            return View();
+        }
+
+        [AcceptVerbs(HttpVerbs.Post)]
+        [Transaction(RollbackOnModelStateError = true)]
+        public void ImportHorses(int id, string url)
+        {
+            EquibaseRace race = new EquibaseRace(new Uri(url));
+
+            foreach(RaceDetail rd in race.Horses)
+            {
+                FormCollection fc = new FormCollection();
+
+                fc.Add("Horse" , rd.Horse.Name);
+                fc.Add("PostPosition", rd.PostPosition.ToString());
+
+                AddHorse(id, fc);
+            }
+        } 
 
         public ActionResult AddExoticPayout(int id, BetTypes bet)
         {

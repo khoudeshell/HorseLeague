@@ -8,9 +8,15 @@ namespace HorseLeague
     {
         public void Page_Load(object sender, System.EventArgs e)
         {
+            string originalPath = Request.Path;
             HttpContext.Current.RewritePath(Request.ApplicationPath, false);
             IHttpHandler httpHandler = new MvcHttpHandler();
-            httpHandler.ProcessRequest(HttpContext.Current);
+            HttpContext.Current.Server.TransferRequest(Request.ApplicationPath);
+            HttpContext.Current.RewritePath(originalPath, false);
+
+            //HttpContext.Current.RewritePath(Request.ApplicationPath, false);
+            //IHttpHandler httpHandler = new MvcHttpHandler();
+            //httpHandler.ProcessRequest(HttpContext.Current);
         }
     }
 }

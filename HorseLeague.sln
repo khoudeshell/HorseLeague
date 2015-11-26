@@ -1,6 +1,8 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.31101.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{0950E47A-1FC0-4448-9EB7-E7C71D1F6801}"
 	ProjectSection(SolutionItems) = preProject
 		Solution Items\Antlr3.Runtime.dll = Solution Items\Antlr3.Runtime.dll
@@ -48,9 +50,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Solution Items\SharpArch.pdb = Solution Items\SharpArch.pdb
 		Solution Items\System.Data.SQLite.DLL = Solution Items\System.Data.SQLite.DLL
 		Solution Items\System.Web.Abstractions.dll = Solution Items\System.Web.Abstractions.dll
-		Solution Items\System.Web.Mvc.dll = Solution Items\System.Web.Mvc.dll
+		C:\Windows\Microsoft.NET\assembly\GAC_MSIL\System.Web.Helpers\v4.0_2.0.0.0__31bf3856ad364e35\System.Web.Helpers.dll = C:\Windows\Microsoft.NET\assembly\GAC_MSIL\System.Web.Helpers\v4.0_2.0.0.0__31bf3856ad364e35\System.Web.Helpers.dll
 		Solution Items\System.Web.Mvc.xml = Solution Items\System.Web.Mvc.xml
 		Solution Items\System.Web.Routing.dll = Solution Items\System.Web.Routing.dll
+		C:\Windows\Microsoft.NET\assembly\GAC_MSIL\System.Web.WebPages\v4.0_2.0.0.0__31bf3856ad364e35\System.Web.WebPages.dll = C:\Windows\Microsoft.NET\assembly\GAC_MSIL\System.Web.WebPages\v4.0_2.0.0.0__31bf3856ad364e35\System.Web.WebPages.dll
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HorseLeague", "HorseLeague.csproj", "{56D80238-8EE7-45E6-BD46-3C1C93A4BD8B}"
@@ -58,9 +61,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HorseLeague.Tests", "..\HorseLeague.Tests\HorseLeague.Tests.csproj", "{C73790CE-EF0F-48A2-941C-461D6F15405A}"
 EndProject
 Global
-	GlobalSection(TestCaseManagementSettings) = postSolution
-		CategoryFile = HorseLeague2.vsmdi
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
@@ -77,5 +77,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(TestCaseManagementSettings) = postSolution
+		CategoryFile = HorseLeague2.vsmdi
 	EndGlobalSection
 EndGlobal

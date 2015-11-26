@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
-using FluentNHibernate.Data;
+using SharpArch.Core.DomainModel;
 
 namespace HorseLeague.Models.Domain
 {

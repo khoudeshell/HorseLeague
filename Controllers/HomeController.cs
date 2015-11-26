@@ -10,6 +10,7 @@ using HorseLeague.Models.Domain;
 using SharpArch.Web.NHibernate;
 using Microsoft.Practices.ServiceLocation;
 using SharpArch.Core.PersistenceSupport;
+using HorseLeague.Logger;
 
 
 namespace HorseLeague.Controllers
@@ -21,8 +22,13 @@ namespace HorseLeague.Controllers
         private readonly IRepository<UserLeague> userLeagueRepository;
         
         public HomeController(IMembershipService membershipService,
-            IRepository<UserLeague> userLeagueRepository) : 
-            base() 
+            IRepository<UserLeague> userLeagueRepository) : this(membershipService, userLeagueRepository, null, null) { }
+            
+        public HomeController(IMembershipService membershipService,
+           IRepository<UserLeague> userLeagueRepository,
+           IUserRepository dataRepository, 
+           ILogger logger ) :
+            base(dataRepository, logger)
         {
             this.membershipService = membershipService ?? new AccountMembershipService();
             this.userLeagueRepository = userLeagueRepository;

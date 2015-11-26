@@ -10,6 +10,7 @@
         <link href="../../Content/Site.css" rel="stylesheet" type="text/css" />
         <LINK REL="apple-touch-icon-precomposed" HREF="../../Content/apple-touch-icon.png" />
         <meta name="keywords" content="horse racing,horse,kentucky derby,belmont stakes,gambling,liquor,beer,keystone light,bourbon,gin,scotch,rum,loser,drinking,vomit" /> 
+        <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
         <script type="text/javascript">
             var _gaq = _gaq || [];
             _gaq.push(['_setAccount', 'UA-7783431-1']);

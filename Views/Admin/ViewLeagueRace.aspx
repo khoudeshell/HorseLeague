@@ -69,6 +69,7 @@
             </table>
             <p>
                 <%=Html.ActionLink("Add Horse", "AddHorse", new { id = this.Model.Id })%> 
+                <%=Html.ActionLink("Import Horses", "ImportHorses", new { id = this.Model.Id })%> 
             </p>
         </fieldset>
 
