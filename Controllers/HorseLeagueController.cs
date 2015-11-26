@@ -15,7 +15,7 @@ namespace HorseLeague.Controllers
         private readonly IUserRepository _userRepository;
         private readonly ILogger _logger;
 
-        protected User user;
+        private User user;
 
         public HorseLeagueController() : this(null, null) { }
 
@@ -43,7 +43,10 @@ namespace HorseLeague.Controllers
         {
             get
             {
-                return HorseUser.UserLeagues[0];
+                if(HorseUser.UserLeagues.Count > 0)
+                    return HorseUser.UserLeagues[0];
+
+                return null;
             }
         }
 
