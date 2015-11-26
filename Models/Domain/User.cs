@@ -8,6 +8,11 @@ namespace HorseLeague.Models.Domain
 {
     public class User : EntityWithTypedId<Guid>
     {
+        public User() : base() 
+        {
+            this.UserLeagues = new List<UserLeague>();
+        }
+
         public virtual string UserName { get; set; }
         public virtual IList<UserLeague> UserLeagues { get; set; }
 

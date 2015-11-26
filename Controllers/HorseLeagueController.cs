@@ -15,7 +15,7 @@ namespace HorseLeague.Controllers
         private readonly IUserRepository _userRepository;
         private readonly ILogger _logger;
 
-        private User user;
+        protected User user;
 
         public HorseLeagueController() : this(null, null) { }
 

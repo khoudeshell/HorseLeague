@@ -28,8 +28,15 @@ namespace HorseLeague.Controllers
            IRepository<UserLeague> userLeagueRepository,
            IUserRepository dataRepository, 
            ILogger logger ) :
+            this(membershipService, userLeagueRepository, dataRepository, logger, null) { }
+        
+        public HomeController(IMembershipService membershipService,
+           IRepository<UserLeague> userLeagueRepository,
+           IUserRepository dataRepository,
+           ILogger logger, User user) :
             base(dataRepository, logger)
         {
+            this.user = user;
             this.membershipService = membershipService ?? new AccountMembershipService();
             this.userLeagueRepository = userLeagueRepository;
         }
