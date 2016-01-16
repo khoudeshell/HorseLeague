@@ -28,7 +28,8 @@
         %>
     </p>
     <div id="picks">
-        <% Html.RenderPartial("UserPicksUserControl");  %>
+        <%  %>
+        <% //Html.RenderPartial("UserPicksUserControl");  %>
     </div> 
     
     <div>

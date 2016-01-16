@@ -186,10 +186,18 @@
                 {
                    foreach(User user in invalidUsers)
                    {
-                   %>
-                        <p><%=Html.ActionLink(user.UserName, "FixUserPicks", new { id = this.Model.Id, userId = user.Id } )%></p>
-                   <%    
+            %>
+                        <p> <%=Html.Hidden("inputScratchUserId-" + user.Id.ToString(), user.Id.ToString())%>
+                            <a onclick="fixScratches('<%=this.Model.Id%>', '<%=user.Id %>'); return false;" href="#"><%=user.UserName%></a> 
+                        </p>
+                        <div id="divScratch_<%=user.Id%>" >
+
+                        </div>
+            <%    
                     }
+            %>
+                    <input type="button" onclick="fixAllScratches('<%=this.Model.Id%>')" id="btnAllScratches" value="Fix All Scratches"  />
+            <%
                 } 
             %>
         </fieldset>
@@ -197,4 +205,33 @@
         <%=Html.ActionLink("Back to List", "Index") %>
     </div>
 
+    <script type="text/javascript">
+        function fixScratches(leagueRaceId, userId) {
+            $.ajax({
+                type: "POST",
+                url: "/admin/FixUserPicks/",
+                data: "id=" + leagueRaceId + "&userId=" + userId,
+                success: function (msg) {
+                    var oldPicks = msg.OldPicks;
+                    var newPicks = msg.NewPicks;
+
+                    var $table = $('<table/>');
+                    $table.append('<tr><td>Bet</td><td>Previous</td><td>Now</td></tr>');
+                    $.each(oldPicks, function (i, item) {
+                        $table.append("<tr><td>" + item.Pick + "</td><td>" + item.Post + ". " +
+                            item.Name + "</td><td>" + newPicks[i].Post + ". " + newPicks[i].Name + "</td></tr>");
+                    });
+                    $('#divScratch_' + userId).append($table);
+                }
+            });
+        }
+
+        function fixAllScratches(leagueRaceId) {
+            var scratches = $("input[name|='inputScratchUserId'");
+
+            $.each(scratches, function (i, item) {
+                fixScratches(leagueRaceId, item.value);            
+            });
+        }
+    </script>
 </asp:Content>

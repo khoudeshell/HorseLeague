@@ -8,7 +8,7 @@ using System.Text;
 namespace HorseLeague.Models.Domain
 {
     public class UserLeague : Entity, IEmailable
-    {
+    { 
         public virtual IList<UserRaceDetail> UserRaceDetails { get; set; }
         public virtual User User { get; set; }
         public virtual League League { get; set; }
@@ -64,9 +64,67 @@ namespace HorseLeague.Models.Domain
             return this.GetPicksForARace(leagueRace).Where(x => x.BetType == betType).FirstOrDefault();
         }
 
-        
-        
+        public virtual IList<UserRaceDetail> FixScratchesForRace(LeagueRace leagueRace)
+        {
+            IList<UserRaceDetail> userPicks = GetPicksForARace(leagueRace);
 
+            IList<UserRaceDetail> adjustedPicks = findAndRemoveScratches(leagueRace, userPicks);
+            shiftPicksUp(adjustedPicks);
+            addRemainingPicks(leagueRace, adjustedPicks);
+
+            foreach (UserRaceDetail newPick in adjustedPicks)
+            {
+                this.AddUserPick(leagueRace, newPick.RaceDetail, newPick.BetType);
+            }
+
+            return adjustedPicks;
+        }
+
+        private void addRemainingPicks(LeagueRace leagueRace, IList<UserRaceDetail> adjustedPicks)
+        {
+            IList<RaceDetail> rds = leagueRace.RaceDetailsByOdds;
+            foreach(RaceDetail rd in rds)
+            {
+                if ((adjustedPicks.Where(x => x.RaceDetail.Id == rd.Id).Count() == 0) && rd.IsScratched == 0)
+                {
+                    adjustedPicks.Add(new UserRaceDetail() { RaceDetail = rd, BetType = (BetTypes)(adjustedPicks.Count + 1) });
+                }
+
+                var disPicks = adjustedPicks.Select(x => x.RaceDetail.Id).Distinct();
+                if (disPicks.ToList().Count == 4) break;
+             }
+        }
+        
+        private IList<UserRaceDetail> findAndRemoveScratches(LeagueRace leagueRace, IList<UserRaceDetail> picks)
+        {
+            IList<RaceDetail> scratches = leagueRace.GetScratches();
+            IList<UserRaceDetail> adjustedPicks = new List<UserRaceDetail>();
+   
+            foreach (UserRaceDetail pick in picks)
+            {
+                if (!scratches.Contains(pick.RaceDetail))
+                {
+                    adjustedPicks.Add(pick.ShallowCopy());
+                }
+            }
+
+            return adjustedPicks;
+        }
+
+        private void shiftPicksUp(IList<UserRaceDetail> picks)
+        {
+            int counter = (int)BetTypes.Win;
+
+            foreach(UserRaceDetail pick in picks.OrderBy(x => x.BetType))
+            {
+                if(counter != (int)pick.BetType)
+                {
+                    pick.BetType = (BetTypes)counter;
+                }
+
+                counter++;
+            }
+        }
         private IQueryable<UserRaceDetail> GetPicksForARaceQueryable(LeagueRace leagueRace)
         {
             return UserRaceDetails.Where(x => x.RaceDetail.LeagueRace == leagueRace).AsQueryable<UserRaceDetail>();

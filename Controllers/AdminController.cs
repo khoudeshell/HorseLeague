@@ -348,6 +348,7 @@ namespace HorseLeague.Controllers
             return BetTypes.Show != payout.BetType;
         }
 
+        /*
         public ActionResult FixUserPicks(int id, System.Guid userId)
         {
             User user = this.UserRepository.Get(userId);
@@ -359,41 +360,38 @@ namespace HorseLeague.Controllers
             
             return View();
         }
-
+        */
+         
         [AcceptVerbs(HttpVerbs.Post)]
         [Transaction]
-        public ActionResult FixUserPicks(int id, System.Guid userId, FormCollection collection)
+        public JsonResult FixUserPicks(int id, System.Guid userId)
         {
             LeagueRace leagueRace = this.UserLeague.League.GetLeagueRace(id);
             User user = this.UserRepository.Get(userId);
             UserLeague userLeague = user.GetUserLeague(leagueRace.League);
-            this.ViewData["UserDomain"] = userLeague;
-            this.ViewData.Model = leagueRace;
-            
-            userLeague.AddUserPick(leagueRace,
-                leagueRace.RaceDetails.Where(x => x.Id == Convert.ToInt32(collection["cmbWin"])).First(),
-                BetTypes.Win);
-            userLeague.AddUserPick(leagueRace,
-                leagueRace.RaceDetails.Where(x => x.Id == Convert.ToInt32(collection["cmbPlace"])).First(),
-                BetTypes.Place);
-            userLeague.AddUserPick(leagueRace,
-                leagueRace.RaceDetails.Where(x => x.Id == Convert.ToInt32(collection["cmbShow"])).First(),
-                BetTypes.Show);
-            userLeague.AddUserPick(leagueRace,
-                leagueRace.RaceDetails.Where(x => x.Id == Convert.ToInt32(collection["cmbBackUp"])).First(),
-                BetTypes.Backup);
 
-            if (!userLeague.IsValidRaceCondition(leagueRace))
-            {
-                ModelState.AddModelError("_FORM", "Put a separate horse for each bet type");
-                return View();
-            }
+            IList<UserRaceDetail> oldPicks = userLeague.GetPicksForARace(leagueRace);
+            IList<UserRaceDetail> updatedPicks = userLeague.FixScratchesForRace(leagueRace);
 
             this.userLeagueRepository.SaveOrUpdate(userLeague);
-            
-            return View();
+
+            return new JsonResult()
+            {
+                Data = new { OldPicks = getHorseList(oldPicks), NewPicks = getHorseList(updatedPicks) }
+            };
         }
 
+        private IList<object> getHorseList(IList<UserRaceDetail> userPicks)
+        {
+            IList<object> smallList = new List<object>();
+
+            foreach(UserRaceDetail pick in userPicks)
+            {
+                smallList.Add(new { Pick = pick.BetType.ToString(), Post = pick.RaceDetail.PostPosition.ToString(), Name = pick.RaceDetail.Horse.Name});
+            }
+
+            return smallList;
+        }
         public ActionResult TestEmail(string email)
         {
             Emailer.SendEmail(new EmailTester(), email, null);

@@ -12,5 +12,10 @@ namespace HorseLeague.Models.Domain
         public virtual UserLeague UserLeague { get; set; }
         public virtual BetTypes BetType { get; set; }
         public virtual DateTime UpdateDate { get; set; }
+
+        public virtual UserRaceDetail ShallowCopy()
+        {
+           return (UserRaceDetail)this.MemberwiseClone();
+        }
     }
 }
