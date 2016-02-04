@@ -12,6 +12,9 @@ using Microsoft.Practices.ServiceLocation;
 using HorseLeague.Models.Domain;
 using SharpArch.Web.NHibernate;
 using HorseLeague.Logger;
+using HorseLeague.Services;
+using System.Configuration;
+using SharpArch.Core.PersistenceSupport;
 
 namespace HorseLeague.Controllers
 {
@@ -24,21 +27,24 @@ namespace HorseLeague.Controllers
         // the default forms authentication and membership providers.
 
         public AccountController()
-            : this(null, null, null)
-        {
-        }
+            : this(null, null, null) { }
 
         // This constructor is not used by the MVC framework but is instead provided for ease
         // of unit testing this type. See the comments at the end of this file for more
         // information.
         public AccountController(IFormsAuthentication formsAuth, IMembershipService service,
-            ILogger logger)
+            ILogger logger) : this(formsAuth, service, logger, null, null) { }
+        
+        public AccountController(IFormsAuthentication formsAuth, IMembershipService service,
+            ILogger logger, IPaypalService paypalService, IEncryptor encryptor)
         {
             FormsAuth = formsAuth ?? new FormsAuthenticationService();
             MembershipService = service ?? new AccountMembershipService();
             Logger = logger ?? new Logger.Logger();
+            PaypalService = paypalService ?? new PaypalService();
+            Encryptor = encryptor ?? new Encryptor(ConfigurationManager.AppSettings["AESKey"].ToString());
         }
-
+        
         public IFormsAuthentication FormsAuth
         {
             get;
@@ -52,6 +58,18 @@ namespace HorseLeague.Controllers
         }
 
         public ILogger Logger
+        {
+            get;
+            private set;
+        }
+
+        public IPaypalService PaypalService
+        {
+            get;
+            private set;
+        }
+
+        public IEncryptor Encryptor
         {
             get;
             private set;
@@ -187,6 +205,39 @@ namespace HorseLeague.Controllers
 
             return View();
         }
+        
+        [Transaction]
+        public ActionResult RecordPaidStatus(string paypalCallback)
+        {
+            try
+            {
+                var paypalDTO = PaypalService.UnpackCallback(this.Encryptor, paypalCallback);
+
+                if (paypalDTO.IsValid)
+                {
+                    if (!this.MembershipService.MarkUserAsPaid(paypalDTO.ParsedUserLeagueId))
+                    {
+                        Logger.LogInfo("Updating user as paid: " + paypalDTO.UserLeagueId);
+                        ModelState.AddModelError("_FORM", "The user was not found.");
+                        Logger.LogInfo("Did not register paypal callback for user league id: " + paypalDTO.ParsedUserLeagueId.ToString());
+                    }
+                }
+                else
+                {
+                    ModelState.AddModelError("_FORM", "The paypal return link was either invalid or expired.");
+                    Logger.LogInfo(String.Format("The paypal return link was either invalid or expired. UserLeagueId: {0} ExpirationDate: {1}",
+                        paypalDTO.UserLeagueId, paypalDTO.LinkDate));
+                }
+            }
+            catch(Exception e)
+            {
+                Logger.LogError("Error recording paypal info", e);
+                ModelState.AddModelError("_FORM", "The paypal return link was invalid.");
+                    
+            }
+            return View();
+        }
+
 
         protected override void OnActionExecuting(ActionExecutingContext filterContext)
         {
@@ -334,6 +385,7 @@ namespace HorseLeague.Controllers
         bool ChangePassword(string userName, string oldPassword, string newPassword);
         string ResetPassword(string userName);
         MembershipUser GetUser(string userName);
+        bool MarkUserAsPaid(int userLeagueId);
     }
 
     public class AccountMembershipService : IMembershipService
@@ -341,20 +393,24 @@ namespace HorseLeague.Controllers
         private MembershipProvider _provider;
         private readonly ILeagueRepository leagueRepository;
         private readonly IUserRepository userRepository;
+        private readonly IRepository<UserLeague> userLeagueRepository; 
 
         public AccountMembershipService()
             : this(null, ServiceLocator.Current.GetInstance<ILeagueRepository>(),
-                    ServiceLocator.Current.GetInstance<IUserRepository>())
+                    ServiceLocator.Current.GetInstance<IUserRepository>(),
+                    ServiceLocator.Current.GetInstance<IRepository<UserLeague>>())
         {
         }
 
         public AccountMembershipService(MembershipProvider provider, 
             ILeagueRepository leagueRepository,
-            IUserRepository userRepository)
+            IUserRepository userRepository,
+            IRepository<UserLeague> userLeagueRepository)
         {
             _provider = provider ?? Membership.Provider;
             this.leagueRepository = leagueRepository;
             this.userRepository = userRepository;
+            this.userLeagueRepository = userLeagueRepository;
         }
 
         public int MinPasswordLength
@@ -402,6 +458,18 @@ namespace HorseLeague.Controllers
         public MembershipUser GetUser(string userName)
         {
             return _provider.GetUser(userName, false);
+        }
+
+        public bool MarkUserAsPaid(int userLeagueId)
+        {
+            var userLeague = userLeagueRepository.Get(userLeagueId);
+
+            if (userLeague == null) return false;
+
+            userLeague.HasPaid = true;
+            userLeagueRepository.SaveOrUpdate(userLeague);
+        
+            return true;
         }
     }
 }

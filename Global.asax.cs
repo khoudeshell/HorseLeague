@@ -111,9 +111,13 @@ namespace HorseLeague
                 app.Context.User.Identity != null && 
                 app.Context.User.Identity.IsAuthenticated)
             {
-                var user = new UserRepository().GetByUserName(app.Context.User.Identity.Name);
+                var userName = app.Context.User.Identity.Name;
+                var user = new UserRepository().GetByUserName(userName);
                 if (user != null)
+                {
+                    user.SecurityUser = new AccountMembershipService().GetUser(userName);
                     app.Context.Items["USER"] = user;
+                }
             }
         }
 

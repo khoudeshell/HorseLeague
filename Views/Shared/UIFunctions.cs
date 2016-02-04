@@ -230,17 +230,9 @@ namespace HorseLeague.Views.Shared
             return null;
         }
 
-        public static bool ShouldShowPurchaseButton(HttpContextWrapper context)
+        public static User GetUser(HttpContextWrapper context)
         {
-            if (context.User.Identity.IsAuthenticated)
-            {
-                var user = context.Items["USER"] as User;
-                if (user != null)
-                {
-                    return !user.HasPaid;
-                }
-            }
-            return false;
+            return context.Items["USER"] as User;
         }
     }
 }

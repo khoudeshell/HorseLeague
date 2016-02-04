@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using SharpArch.Core.DomainModel;
+using System.Web.Security;
 
 namespace HorseLeague.Models.Domain
 {
@@ -15,6 +16,8 @@ namespace HorseLeague.Models.Domain
 
         public virtual string UserName { get; set; }
         public virtual IList<UserLeague> UserLeagues { get; set; }
+
+        public virtual MembershipUser SecurityUser { private get; set; }
 
         public virtual UserLeague GetUserLeague(League league)
         {
@@ -36,6 +39,8 @@ namespace HorseLeague.Models.Domain
                 return hasPaid;
             }
         }
+
+
 
     }
 }

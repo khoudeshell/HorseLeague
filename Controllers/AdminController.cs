@@ -329,15 +329,6 @@ namespace HorseLeague.Controllers
             return payout;
         }
 
-        //private RaceDetailPayout createPayout(LeagueRace leagueRace, BetTypes bet)
-        //{
-        //    RaceDetailPayout payout = new RaceDetailPayout();
-
-        //    payout.BetType = bet;
-            
-        //    return payout;
-        //}
-
         private bool isWinEnabled(RaceDetailPayout payout)
         {
             return BetTypes.Win == payout.BetType;
@@ -347,20 +338,6 @@ namespace HorseLeague.Controllers
         {
             return BetTypes.Show != payout.BetType;
         }
-
-        /*
-        public ActionResult FixUserPicks(int id, System.Guid userId)
-        {
-            User user = this.UserRepository.Get(userId);
-            this.ViewData["UserDomain"] = user.GetUserLeague(this.UserLeague.League);
-            LeagueRace leagueRace = this.UserLeague.League.GetLeagueRace(id);
-
-            leagueRace.IsUpdateable = true;
-            this.ViewData.Model = leagueRace;
-            
-            return View();
-        }
-        */
          
         [AcceptVerbs(HttpVerbs.Post)]
         [Transaction]
