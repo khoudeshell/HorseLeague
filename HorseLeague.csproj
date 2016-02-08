@@ -168,6 +168,7 @@
     <Compile Include="Controllers\RouteRegistrar.cs" />
     <Compile Include="Controllers\ScheduleController.cs" />
     <Compile Include="Controllers\StandingsController.cs" />
+    <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="Default.aspx.cs">
       <DependentUpon>Default.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -264,6 +265,8 @@
     <Content Include="Views\Admin\ImportHorses.aspx" />
     <Content Include="Views\Admin\Index.aspx" />
     <Content Include="Views\Admin\RecalcStandings.aspx" />
+    <Content Include="Views\Users\Index.aspx" />
+    <Content Include="Views\Users\View.aspx" />
     <Content Include="Views\Admin\ViewLeagueRace.aspx" />
     <Content Include="Views\Error\Index.aspx" />
     <Content Include="Views\Home\Picks.aspx" />
@@ -317,7 +320,16 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\web.config" />
-    <None Include="Properties\PublishProfiles\test.pubxml" />
+    <None Include="Properties\PublishProfiles\TCR.pubxml" />
+    <None Include="Properties\PublishProfiles\TCR_old.pubxml" />
+    <None Include="Properties\PublishProfiles\triplecrownroyal.com - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\triplecrownroyal.com - Web Deploy.pubxml" />
+    <None Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
+    <None Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </None>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

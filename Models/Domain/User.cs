@@ -17,7 +17,7 @@ namespace HorseLeague.Models.Domain
         public virtual string UserName { get; set; }
         public virtual IList<UserLeague> UserLeagues { get; set; }
 
-        public virtual MembershipUser SecurityUser { private get; set; }
+        public virtual MembershipUser SecurityUser { get; set; }
 
         public virtual UserLeague GetUserLeague(League league)
         {

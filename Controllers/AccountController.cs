@@ -42,7 +42,7 @@ namespace HorseLeague.Controllers
             MembershipService = service ?? new AccountMembershipService();
             Logger = logger ?? new Logger.Logger();
             PaypalService = paypalService ?? new PaypalService();
-            Encryptor = encryptor ?? new Encryptor(ConfigurationManager.AppSettings["AESKey"].ToString());
+            Encryptor = encryptor ?? new Encryptor(ConfigurationManager.AppSettings["AESKey"] == null ? String.Empty : ConfigurationManager.AppSettings["AESKey"].ToString());
         }
         
         public IFormsAuthentication FormsAuth
@@ -215,7 +215,7 @@ namespace HorseLeague.Controllers
 
                 if (paypalDTO.IsValid)
                 {
-                    if (!this.MembershipService.MarkUserAsPaid(paypalDTO.ParsedUserLeagueId))
+                    if (!this.MembershipService.UpdatePaid(paypalDTO.ParsedUserLeagueId, true))
                     {
                         Logger.LogInfo("Updating user as paid: " + paypalDTO.UserLeagueId);
                         ModelState.AddModelError("_FORM", "The user was not found.");
@@ -385,7 +385,8 @@ namespace HorseLeague.Controllers
         bool ChangePassword(string userName, string oldPassword, string newPassword);
         string ResetPassword(string userName);
         MembershipUser GetUser(string userName);
-        bool MarkUserAsPaid(int userLeagueId);
+        bool UpdatePaid(int userLeagueId, bool value);
+        void UnlockUser(string userName);
     }
 
     public class AccountMembershipService : IMembershipService
@@ -460,16 +461,21 @@ namespace HorseLeague.Controllers
             return _provider.GetUser(userName, false);
         }
 
-        public bool MarkUserAsPaid(int userLeagueId)
+        public bool UpdatePaid(int userLeagueId, bool value)
         {
             var userLeague = userLeagueRepository.Get(userLeagueId);
 
             if (userLeague == null) return false;
 
-            userLeague.HasPaid = true;
+            userLeague.HasPaid = value;
             userLeagueRepository.SaveOrUpdate(userLeague);
         
             return true;
+        }
+
+        public void UnlockUser(string userName)
+        {
+            _provider.UnlockUser(userName);
         }
     }
 }

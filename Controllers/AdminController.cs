@@ -358,6 +358,7 @@ namespace HorseLeague.Controllers
             };
         }
 
+
         private IList<object> getHorseList(IList<UserRaceDetail> userPicks)
         {
             IList<object> smallList = new List<object>();

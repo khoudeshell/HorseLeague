@@ -74,22 +74,7 @@
     <br />
     <fieldset>
         <legend>Users</legend>
-        <table width="100%"> 
-            <tr>
-                <th>#</th>
-                <th>User</th>
-                <th>Action</th>
-            </tr>
-        <% i = 1;
-           foreach (HorseLeague.Models.Domain.User user in (IEnumerable)ViewData["Users"])
-           { %>    
-                <tr>
-                    <td><%=i%>.</td>
-                    <td><%=Html.Encode(user.UserName)  %></td>
-                    <td><%=Html.ActionLink("Reset Password", "ResetPassword", "Account", new { userName = user.UserName }, null)%></td>
-                </tr>
-        <% i++;
-            } %>
-        </table> 
+        
+        <a href="/Users">View All Users</a>
     </fieldset>
 </asp:Content>
