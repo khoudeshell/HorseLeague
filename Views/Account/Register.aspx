@@ -25,7 +25,7 @@
                 </p>
                 <p>
                     <label for="email">Email:</label>
-                    <%= Html.TextBox("email") %>
+                    <%= Html.TextBox("email", "", new { type = "email" })%>
                     <%= Html.ValidationMessage("email") %>
                 </p>
                 <p>

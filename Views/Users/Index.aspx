@@ -17,6 +17,7 @@
             <tr>
                 <th>#</th>
                 <th>User</th>
+                <th>Paid</th>
             </tr>
         <% var i = 1;
            foreach (HorseLeague.Models.Domain.User user in (IEnumerable)ViewData["Users"])
@@ -24,6 +25,7 @@
                 <tr>
                     <td><%=i%>.</td>
                     <td><%=Html.ActionLink(Html.Encode(user.UserName), "View", "Users", new { userName = user.UserName }, null)  %></td>
+                    <td><%=user.HasPaid %></td>
                 </tr>
         <% i++;
             } %>

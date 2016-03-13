@@ -438,7 +438,8 @@ namespace HorseLeague.Controllers
                 u.UserLeagues.Add(new UserLeague()
                 {
                     League = league,
-                    User = u
+                    User = u,
+                    HasPaid = false
                 });
                 userRepository.SaveOrUpdate(u);
             }

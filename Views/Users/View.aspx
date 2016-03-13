@@ -17,6 +17,8 @@
 
         <p>Name: <%=name %></p>
 
+        <p>Email: <%=this.Model.SecurityUser.Email %></p>
+
         <p>Id: <%=this.Model.Id %></p>
 
         <p>Locked Status: <%=this.Model.SecurityUser.IsLockedOut.ToString() %> </p>
