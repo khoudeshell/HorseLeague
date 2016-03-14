@@ -21,7 +21,7 @@
             </p>
             <p>
                 <label for="PostPosition">Post:</label>
-                <%= Html.TextBox("PostPosition") %>
+                <%= Html.TextBox("PostPosition", Model.LeagueRace.RaceDetails.Count + 1) %>
                 <%= Html.ValidationMessage("PostPosition", "*") %>
             </p>
             <p>
