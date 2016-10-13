@@ -5,7 +5,25 @@
 <%@ Import Namespace="HorseLeague.Views.Shared" %> 
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
-	<title>ViewLeagueRace</title>
+	<title>ViewLeagueRace</title>    
+</asp:Content>
+
+<asp:Content ID="ScriptContent" ContentPlaceHolderID="scripts" runat="server">
+    <link rel="stylesheet" media="all" type="text/css" href="https://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css" />
+	<link rel="stylesheet" media="all" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.6.3/jquery-ui-timepicker-addon.css" />
+
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.6.3/jquery-ui-timepicker-addon.js"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.6.3/i18n/jquery-ui-timepicker-addon-i18n.min.js"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ui-timepicker-addon/1.6.3/jquery-ui-sliderAccess.js"></script>
+    
+    <script>
+        $( function() {
+            $( "#txtPost" ).datetimepicker({
+                timeFormat: "hh:mm TT"
+            });
+        } );
+		</script>
 </asp:Content>
 
 <asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
@@ -28,7 +46,7 @@
                 </tr>
                 <tr>
                     <td>Post Time:</td>
-                    <td><%= Html.TextBox("txtPost", this.Model.PostTimeEST) %></td>
+                    <td><%= Html.TextBox("txtPost", this.Model.PostTimeEST.ToString("MM/dd/yyyy hh:mm tt"))%></td>
                 </tr>
                 <tr>
                     <td>Is Active:</td>
@@ -205,6 +223,7 @@
         <%=Html.ActionLink("Back to List", "Index") %>
     </div>
 
+    
     <script type="text/javascript">
         function fixScratches(leagueRaceId, userId) {
             $.ajax({
@@ -233,5 +252,9 @@
                 fixScratches(leagueRaceId, item.value);            
             });
         }
+
+        
     </script>
+
+    
 </asp:Content>
