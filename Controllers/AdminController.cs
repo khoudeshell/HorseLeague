@@ -98,7 +98,7 @@ namespace HorseLeague.Controllers
         public ActionResult AddHorse(int id, FormCollection collection)
         {
             #region Validation
-            string horseName = collection["Horse"];
+            string horseName = Horse.SanitizedName(collection["Horse"]);
             if (horseName == null)
             {
                 ModelState.AddModelError("Horse", "The horse name can not be blank");
@@ -116,7 +116,6 @@ namespace HorseLeague.Controllers
 
             try
             {
-
                 Horse horse = this.horseRepository.GetHorseByName(horseName);
                 if (horse == null)
                 {
@@ -135,9 +134,6 @@ namespace HorseLeague.Controllers
                 detail.LeagueRace = leagueRace;
                 detail.PostPosition = post;
                 raceDetailRepository.SaveOrUpdate(detail);
-
-                //leagueRace.RaceDetails.Add(detail);
-               // leagueRaceRepository.SaveOrUpdate(leagueRace);
 
                 return RedirectToAction("ViewLeagueRace", new { id = id });
             }
