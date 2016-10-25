@@ -21,7 +21,7 @@ namespace HorseLeague.Models.Domain
         {
             get
             {
-                return LeagueRaces.Where(x => x.IsActive == 1).ToList<LeagueRace>();
+                return LeagueRaces.Where(x => x.IsActive == true).ToList<LeagueRace>();
             }
         }
 

@@ -11,7 +11,7 @@ namespace HorseLeague.Models.Domain
         public virtual DateTime RaceDate { get; set; }
         public virtual int Weight { get; set; }
         public virtual DateTime? PostTime { get; set; }
-        public virtual int IsActive { get; set; }
+        public virtual bool IsActive { get; set; }
         public virtual string FormUrl { get; set; }
 
         public virtual Race Race { get; set; }

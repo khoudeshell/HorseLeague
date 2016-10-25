@@ -50,7 +50,7 @@
                 </tr>
                 <tr>
                     <td>Is Active:</td>
-                    <td><%= Html.TextBox("txtIsActive", this.Model.IsActive) %></td>
+                    <td><%= Html.CheckBox("chkIsActive", this.Model.IsActive) %></td>
                 </tr>
                 <tr>
                     <td>Form Url:</td>

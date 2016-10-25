@@ -58,7 +58,7 @@ namespace HorseLeague.Controllers
             LeagueRace domain = initializeViewLeagueRace(id);
             
             domain.PostTimeEST = Convert.ToDateTime(collection["txtPost"]);
-            domain.IsActive = Convert.ToInt32(collection["txtIsActive"]);
+            domain.IsActive = collection["chkIsActive"].Contains("true");
             domain.FormUrl = Convert.ToString(collection["txtForm"]);
 
             this.leagueRaceRepository.SaveOrUpdate(domain);
