@@ -32,7 +32,8 @@
     
     <%= Html.ValidationSummary() %>
 
-    <% using (Html.BeginForm()) {%>
+    <% using (Html.BeginForm())
+       {%>
         <fieldset>
             <legend>League Race</legend>
             <table width="100%">
@@ -54,8 +55,9 @@
                 </tr>
                 <tr>
                     <td>Form Url:</td>
-                    <td><%= Html.TextBox("txtForm", this.Model.FormUrl) %></td>
+                    <td><%= Html.TextBox("txtForm", this.Model.FormUrl) %> <%=Html.ActionLink("Upload", "Upload", "File", new {id = this.Model.Id}, null )%> </td>
                 </tr>
+                
             </table>
             
              <input type="submit" value="Save" />

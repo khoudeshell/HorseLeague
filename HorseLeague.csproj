@@ -265,6 +265,7 @@
     <Content Include="Views\Admin\ImportHorses.aspx" />
     <Content Include="Views\Admin\Index.aspx" />
     <Content Include="Views\Admin\RecalcStandings.aspx" />
+    <Content Include="Views\File\Upload.aspx" />
     <Content Include="Views\Users\Index.aspx" />
     <Content Include="Views\Users\View.aspx" />
     <Content Include="Views\Admin\ViewLeagueRace.aspx" />
