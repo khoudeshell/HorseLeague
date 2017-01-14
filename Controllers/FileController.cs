@@ -32,12 +32,13 @@ namespace HorseLeague.Controllers
             return this.File(fullFilePath(fileName), "application/pdf");
         }
 
-        [Authorize]
+        [Authorize(Users = "kurt,stephanie")]
         public ActionResult Upload(int id)
         {
             return View();
         }
 
+        [Authorize(Users = "kurt,stephanie")]
         [AcceptVerbs(HttpVerbs.Post)]
         [Transaction]
         public ActionResult Upload(int id, FormCollection collection)
@@ -90,7 +91,9 @@ namespace HorseLeague.Controllers
 
         private string getUrl(string fileName)
         {
-            return String.Format("/{0}/{1}", strippedConfigPath, fileName);
+            //http://localhost:3643/file/get?filename=2015_bc_r3.pdf
+
+            return String.Format("/file/get?filename={0}", fileName);
         }
     }
 }
