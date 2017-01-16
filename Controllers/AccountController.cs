@@ -15,6 +15,7 @@ using HorseLeague.Logger;
 using HorseLeague.Services;
 using System.Configuration;
 using SharpArch.Core.PersistenceSupport;
+using HorseLeague.Email;
 
 namespace HorseLeague.Controllers
 {
@@ -75,11 +76,13 @@ namespace HorseLeague.Controllers
             private set;
         }
 
+        #region LogOn
         public ActionResult LogOn()
         {
 
             return View();
         }
+
 
         [AcceptVerbs(HttpVerbs.Post)]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings",
@@ -105,7 +108,9 @@ namespace HorseLeague.Controllers
                 return RedirectToAction("Index", "Home");
             }
         }
+        #endregion
 
+        #region LogOff
         public ActionResult LogOff()
         {
 
@@ -113,7 +118,9 @@ namespace HorseLeague.Controllers
 
             return RedirectToAction("Index", "Home");
         }
+        #endregion
 
+        #region Register
         public ActionResult Register()
         {
 
@@ -150,7 +157,40 @@ namespace HorseLeague.Controllers
             // If we got this far, something failed, redisplay form
             return View();
         }
+        #endregion
 
+        #region Forgot User Name
+        public ActionResult ForgotUserName()
+        {
+            return View();
+        }
+
+        [AcceptVerbs(HttpVerbs.Post)]
+        public ActionResult ForgotUserName(string email)
+        {
+
+            if (String.IsNullOrEmpty(email))
+            {
+                ModelState.AddModelError("email", "You must enter an email address.");
+                return View();
+            }
+
+            MembershipUserCollection users = MembershipService.FindUsersByEmail(email);
+            if(users == null || users.Count == 0)
+            {
+                ModelState.AddModelError("email", "No users were found for that email.");
+                return View();
+            }
+
+            Emailer.SendEmail(new ForgotUserNameEmailTemplate(users), email);
+
+            ViewData["email"] = email;
+
+            return View("ForgotUserNameSuccess");
+        }
+        #endregion
+
+        #region Change Password
         [Authorize]
         public ActionResult ChangePassword()
         {
@@ -158,15 +198,7 @@ namespace HorseLeague.Controllers
 
             return View();
         }
-
-        [Authorize]
-        public ActionResult ResetPassword(string userName)
-        {
-            ViewData["NewPassword"] = this.MembershipService.ResetPassword(userName);
-            
-            return View();
-        }
-
+        
         [Authorize]
         [AcceptVerbs(HttpVerbs.Post)]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes",
@@ -202,10 +234,21 @@ namespace HorseLeague.Controllers
 
         public ActionResult ChangePasswordSuccess()
         {
+            return View();
+        }
+        #endregion
+
+        #region Reset Password
+        [Authorize]
+        public ActionResult ResetPassword(string userName)
+        {
+            ViewData["NewPassword"] = this.MembershipService.ResetPassword(userName);
 
             return View();
         }
-        
+        #endregion
+
+        #region Record Paid Status
         [Transaction]
         public ActionResult RecordPaidStatus(string paypalCallback)
         {
@@ -237,7 +280,7 @@ namespace HorseLeague.Controllers
             }
             return View();
         }
-
+        #endregion
 
         protected override void OnActionExecuting(ActionExecutingContext filterContext)
         {
@@ -387,6 +430,7 @@ namespace HorseLeague.Controllers
         MembershipUser GetUser(string userName);
         bool UpdatePaid(int userLeagueId, bool value);
         void UnlockUser(string userName);
+        MembershipUserCollection FindUsersByEmail(string email);
     }
 
     public class AccountMembershipService : IMembershipService
@@ -460,6 +504,13 @@ namespace HorseLeague.Controllers
         public MembershipUser GetUser(string userName)
         {
             return _provider.GetUser(userName, false);
+        }
+
+        public MembershipUserCollection FindUsersByEmail(string email)
+        {
+            int countOfUsers;
+            
+            return _provider.FindUsersByEmail(email, 0, 100, out countOfUsers);
         }
 
         public bool UpdatePaid(int userLeagueId, bool value)

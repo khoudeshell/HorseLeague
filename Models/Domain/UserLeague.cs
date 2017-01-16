@@ -7,7 +7,7 @@ using System.Text;
 
 namespace HorseLeague.Models.Domain
 {
-    public class UserLeague : Entity, IEmailable
+    public class UserLeague : Entity
     { 
         public virtual IList<UserRaceDetail> UserRaceDetails { get; set; }
         public virtual User User { get; set; }
@@ -168,40 +168,6 @@ namespace HorseLeague.Models.Domain
             urd.UpdateDate = System.DateTime.Now;
 
             this.UserRaceDetails.Add(urd);
-        }
-
-        #region IEmailable Members
-
-        public virtual string GetSubject(LeagueRace leagueRace)
-        {
-            return String.Format("Picks for {0}", leagueRace.Race.Name); 
-        }
-
-        public virtual string GetBody(LeagueRace leagueRace)
-        {
-            StringBuilder emailBody = new StringBuilder();
-
-            CreatePickText(leagueRace, emailBody, BetTypes.Win);
-            CreatePickText(leagueRace, emailBody, BetTypes.Place);
-            CreatePickText(leagueRace, emailBody, BetTypes.Show);
-            CreatePickText(leagueRace, emailBody, BetTypes.Backup);
-
-            emailBody.AppendLine("");
-            emailBody.AppendLine("User id: " + this.User.Id.ToString());
-
-            return emailBody.ToString();
-            
-        }
-
-        private void CreatePickText(LeagueRace leagueRace, StringBuilder output, BetTypes betType)
-        {
-            RaceDetail rd = this.GetUserPickByType(leagueRace, betType).RaceDetail;
-
-            output.AppendLine(String.Format("{0}: {1}-{2}", betType.ToString(),
-                rd.PostPosition, rd.Horse.Name));
-        }
-        #endregion
-
-       
+        }       
     }
 }

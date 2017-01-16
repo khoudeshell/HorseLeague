@@ -5,7 +5,7 @@ using System.Web;
 using System.Web.Mvc;
 using HorseLeague.Models;
 using HorseLeague.Models.DataAccess;
-using HorseLeague.Helpers;
+using HorseLeague.Email;
 using HorseLeague.Models.Domain;
 using SharpArch.Web.NHibernate;
 using Microsoft.Practices.ServiceLocation;
@@ -99,7 +99,9 @@ namespace HorseLeague.Controllers
             this.ViewData["SuccessMessage"] = "Picks updated successfully";
             Logger.LogInfo(string.Format("Saved picks for User: {0}", this.User.Identity.Name));
 
-            Emailer.SendEmail(UserLeague, membershipService.GetUser(this.HorseUser.UserName).Email, leagueRace);
+            Emailer.SendEmail(new RacePickSuccessEmailTemplate(leagueRace.Race.Name, UserLeague.GetPicksForARace(leagueRace), UserLeague.Id), 
+                membershipService.GetUser(this.HorseUser.UserName).Email);
+
             return View();
         }
 

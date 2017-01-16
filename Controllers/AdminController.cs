@@ -9,7 +9,7 @@ using HorseLeague.Models;
 using HorseLeague.Models.Domain;
 using SharpArch.Core.PersistenceSupport;
 using SharpArch.Web.NHibernate;
-using HorseLeague.Helpers;
+using HorseLeague.Email;
 using System.Web.Script.Serialization;
 
 namespace HorseLeague.Controllers
@@ -368,22 +368,9 @@ namespace HorseLeague.Controllers
         }
         public ActionResult TestEmail(string email)
         {
-            Emailer.SendEmail(new EmailTester(), email, null);
+            Emailer.SendEmail(new EmailTester(), email);
 
             return null;
-        }
-
-        private class EmailTester : IEmailable
-        {
-            public string GetSubject(LeagueRace leagueRace)
-            {
-                return "Test Subject";
-            }
-
-            public string GetBody(LeagueRace leagueRace)
-            {
-                return "Test Body";
-            }
         }
 
         [Transaction]

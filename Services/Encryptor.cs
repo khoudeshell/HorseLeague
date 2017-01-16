@@ -25,17 +25,19 @@ namespace HorseLeague.Services
                 byte[] IV = new byte[15];
                 Random rand = new Random();
                 rand.NextBytes(IV);
-                Rfc2898DeriveBytes pdb = new Rfc2898DeriveBytes(this.encryptionKey, IV);
-                encryptor.Key = pdb.GetBytes(32);
-                encryptor.IV = pdb.GetBytes(16);
-                using (MemoryStream ms = new MemoryStream())
+                using (Rfc2898DeriveBytes pdb = new Rfc2898DeriveBytes(this.encryptionKey, IV))
                 {
-                    using (CryptoStream cs = new CryptoStream(ms, encryptor.CreateEncryptor(), CryptoStreamMode.Write))
+                    encryptor.Key = pdb.GetBytes(32);
+                    encryptor.IV = pdb.GetBytes(16);
+                    using (MemoryStream ms = new MemoryStream())
                     {
-                        cs.Write(clearBytes, 0, clearBytes.Length);
-                        cs.Close();
+                        using (CryptoStream cs = new CryptoStream(ms, encryptor.CreateEncryptor(), CryptoStreamMode.Write))
+                        {
+                            cs.Write(clearBytes, 0, clearBytes.Length);
+                            cs.Close();
+                        }
+                        clearText = Convert.ToBase64String(IV) + Convert.ToBase64String(ms.ToArray());
                     }
-                    clearText = Convert.ToBase64String(IV) + Convert.ToBase64String(ms.ToArray());
                 }
             }
             return clearText;
