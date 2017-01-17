@@ -22,4 +22,7 @@
                 </p>
         </div>
     <% } %>
+    <div>
+        <%=Html.ActionLink("Back to Login", "Logon") %>
+    </div>
 </asp:Content>

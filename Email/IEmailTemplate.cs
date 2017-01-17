@@ -112,4 +112,39 @@ namespace HorseLeague.Email
             }
         }
     }
+
+    public class ForgotPasswordEmailTemplate : IEmailTemplate
+    {
+        private string _userName;
+        private string _newPassword;
+
+        public ForgotPasswordEmailTemplate(string userName, string newPassword)
+        {
+            this._userName = userName;
+            this._newPassword = newPassword;
+        }
+
+        public string Subject
+        {
+            get { return "Forgot Password for Triple Crown Royal"; }
+        }
+
+        public string Body
+        {
+            get
+            {
+                StringBuilder emailBody = new StringBuilder();
+
+                emailBody.AppendLine("Here is the login information for Triple Crown Royal:");
+                emailBody.AppendLine(string.Format("User:{0}", this._userName));
+                emailBody.AppendLine(string.Format("Auto Generated Password:{0}", this._newPassword));
+
+                emailBody.AppendLine("Please use the Change Password functionality within the site to change the password to something more memorable" );
+
+                emailBody.AppendLine("http://triplecrownroyal.com");
+
+                return emailBody.ToString();
+            }
+        }
+    }
 }

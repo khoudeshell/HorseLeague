@@ -190,6 +190,42 @@ namespace HorseLeague.Controllers
         }
         #endregion
 
+        #region Forgot Password
+        public ActionResult ForgotPassword()
+        {
+            return View();
+        }
+
+        [AcceptVerbs(HttpVerbs.Post)]
+        public ActionResult ForgotPassword(string userName)
+        {
+
+            if (String.IsNullOrEmpty(userName))
+            {
+                ModelState.AddModelError("userName", "You must enter a user name.");
+                return View();
+            }
+
+            var user = MembershipService.GetUser(userName);
+            if (user == null)
+            {
+                ModelState.AddModelError("userName", "No user was found for that user name.");
+                return View();
+            }
+
+            if (user.IsLockedOut) 
+                MembershipService.UnlockUser(userName);
+
+            var newPassword = MembershipService.ResetPassword(userName);
+
+            Emailer.SendEmail(new ForgotPasswordEmailTemplate(userName, newPassword), user.Email);
+
+            ViewData["userName"] = userName;
+
+            return View("ForgotPasswordSuccess");
+        }
+        #endregion
+
         #region Change Password
         [Authorize]
         public ActionResult ChangePassword()

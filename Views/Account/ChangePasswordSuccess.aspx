@@ -9,4 +9,7 @@
     <p>
         Your password has been changed successfully.
     </p>
+    <div>
+        <%=Html.ActionLink("Back to Login", "Logon") %>
+    </div>
 </asp:Content>
