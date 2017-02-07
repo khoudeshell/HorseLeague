@@ -99,8 +99,11 @@ namespace HorseLeague
             // Useful for debugging
             Exception ex = Server.GetLastError();
             ReflectionTypeLoadException reflectionTypeLoadException = ex as ReflectionTypeLoadException;
-            
-            new Logger.Logger().LogError("Unhandled error", ex);
+
+            if (!ex.Message.ToLower().Contains("php") && !ex.Message.ToLower().Contains("htm"))
+            {
+                new Logger.Logger().LogError("Unhandled error", ex);
+            }
         }
 
         protected void Application_PreRequestHandlerExecute(object sender, EventArgs e)
