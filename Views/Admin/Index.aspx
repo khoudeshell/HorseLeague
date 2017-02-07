@@ -77,4 +77,9 @@
         
         <a href="/Users">View All Users</a>
     </fieldset>
+    <fieldset>
+        <legend>Logs</legend>
+        
+        <a href="/Logs">View Application Logs</a>
+    </fieldset>
 </asp:Content>
