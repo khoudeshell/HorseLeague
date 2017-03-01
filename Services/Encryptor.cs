@@ -46,7 +46,9 @@ namespace HorseLeague.Services
         public string Decrypt(string cipherText)
         {
             byte[] IV = Convert.FromBase64String(cipherText.Substring(0, 20));
-            cipherText = cipherText.Substring(20).Replace(" ", "+");
+            cipherText = cipherText.Substring(20).Replace(" ", "+")
+                .Replace("\"", "");
+
             byte[] cipherBytes = Convert.FromBase64String(cipherText);
             using (Aes encryptor = Aes.Create())
             {
