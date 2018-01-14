@@ -9,9 +9,13 @@
         <title>Triple Crown Royal</title>
         <link href="../../Content/Site.css" rel="stylesheet" type="text/css" />
         <link rel="apple-touch-icon-precomposed" href="../../Content/apple-touch-icon.png" />
+        
         <meta name="keywords" content="horse racing,horse,kentucky derby,belmont stakes,gambling,liquor,beer,keystone light,bourbon,gin,scotch,rum,loser,drinking,vomit" /> 
         <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-        
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <script src="https://www.paypalobjects.com/api/checkout.js"></script>
+
         <asp:ContentPlaceHolder ID="scripts" runat="server" />
 
         <script type="text/javascript">
@@ -24,7 +28,67 @@
                 ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
                 var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
             })();
+        
+         </script>
+         <script>
+
+            // Render the PayPal button
+
+            paypal.Button.render({
+
+                // Set your environment
+
+                env: 'sandbox', // sandbox | production
+
+                // Specify the style of the button
+                style: {
+                    label: 'buynow',
+                    size: 'small',    // small | medium | large | responsive
+                    shape: 'pill',     // pill | rect
+                    color: 'blue'      // gold | blue | silver | black
+                },
+
+                // Create a PayPal app: https://developer.paypal.com/developer/applications/create
+                client: {
+                    sandbox: 'ATmE-rMdHaTKZsknV1OH1ac3JgnKOf-gjF30lWL0Eb0CT9jn7XKk4w6CEPvr5QVlbBdusHh0OFu6rt1R',
+                    production: 'AS54dgoJkFwaSLK1Nhtw-6AMPaGmnPSWer8dS0TlbbTYrKg6FPr2xPII3i-qV5VDs6R7s9cURbNFs34-'
+                },
+
+                payment: function (data, actions) {
+                    return actions.payment.create({
+                        payment: {
+                            transactions: [
+                                {
+                                    amount: { total: '21.22', currency: 'USD' }
+                                }
+                            ]
+                        }
+                    });
+                },
+
+                onAuthorize: function (data, actions) {
+                    return actions.payment.execute().then(function () {
+
+                        return window.paypal.request.post("/Users/RecordPaidStatus", data).then(function (result) {
+                            document.querySelector('#paypal-button-container').style.display = 'none';
+
+                            if (result.success) {
+                                document.querySelector('#paymentResultsSuccess').style.display = 'block';
+                            }
+                            else {
+                                document.querySelector('#paymentResultsError').style.display = 'block';
+                            }
+
+                        });
+                       
+                    });
+                }
+
+            }, '#paypal-button-container');
+
         </script>
+    
+
     </head>
     <body>
     <div class="page">
@@ -58,37 +122,25 @@
                 
                 if(user != null && !user.HasPaid)
                 {
-                    string callbackValue = new HorseLeague.Services.PaypalService().GenerateCallbackValue(
-                        new HorseLeague.Services.Encryptor(ConfigurationManager.AppSettings["AESKey"].ToString()),
-                        user.UserLeagues[0]);
-
-                    string callbackUrl = "http://triplecrownroyal.com//Account/RecordPaidStatus?paypalCallback=" + callbackValue;
-            %>
-                    <div id="paypal">
-                        <!--
-                        <form action="https://www.sandbox.paypal.com/cgi-bin/webscr" method="post" target="_top">
-<input type="hidden" name="cmd" value="_s-xclick">
-<input type="hidden" name="hosted_button_id" value="REA7MZE5UN6FQ">
-<INPUT TYPE="hidden" NAME="return" value="<%=callbackUrl%>">
-<input type="image" src="https://www.sandbox.paypal.com/en_US/i/btn/btn_buynowCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
-<img alt="" border="0" src="https://www.sandbox.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1">
-</form>
-                            -->
-
-                        <form action="https://www.paypal.com/cgi-bin/webscr" method="post">
-                            <input type="hidden" name="cmd" value="_s-xclick">
-                            <input type="hidden" name="hosted_button_id" value="2PCWHRZQBK8RL">
-                            <INPUT TYPE="hidden" NAME="return" value="<%=callbackUrl%>">
-                            <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_buynow_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
-                            <img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
-                        </form>
-                    </div>
+             %>
+                    <div id="paypal-button-container"></div>
              <%
                 }
              %>
         </div>
 
         <div id="main">
+            <div id="paymentResultsSuccess" style="display: none;">
+                <p class="success">Your payment status has been recorded successfully in TCR!</p>
+            </div>
+            <div id="paymentResultsError" style="display: none;">
+                <p class="error">
+                    Although the Paypal transaction was successful an error occurred when marking your status as paid in TCR.
+                </p>
+                <p class="error">    
+                    Please <a href="mailto:triplecrownroyal@gmail.com">contact TCR</a> about this issue to ensure your status is updated.
+                </p>
+            </div>
             <asp:ContentPlaceHolder ID="MainContent" runat="server" />
 
             <div id="footer">

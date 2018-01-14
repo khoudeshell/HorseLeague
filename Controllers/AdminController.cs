@@ -135,7 +135,7 @@ namespace HorseLeague.Controllers
                 detail.PostPosition = post;
                 raceDetailRepository.SaveOrUpdate(detail);
 
-                return RedirectToAction("ViewLeagueRace", new { id = id });
+                return RedirectToAction("AddHorse", new { id = id });
             }
             catch
             {

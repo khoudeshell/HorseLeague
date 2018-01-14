@@ -12,7 +12,6 @@ using Microsoft.Practices.ServiceLocation;
 using HorseLeague.Models.Domain;
 using SharpArch.Web.NHibernate;
 using HorseLeague.Logger;
-using HorseLeague.Services;
 using System.Configuration;
 using SharpArch.Core.PersistenceSupport;
 using HorseLeague.Email;
@@ -34,16 +33,11 @@ namespace HorseLeague.Controllers
         // of unit testing this type. See the comments at the end of this file for more
         // information.
         public AccountController(IFormsAuthentication formsAuth, IMembershipService service,
-            ILogger logger) : this(formsAuth, service, logger, null, null) { }
-        
-        public AccountController(IFormsAuthentication formsAuth, IMembershipService service,
-            ILogger logger, IPaypalService paypalService, IEncryptor encryptor)
-        {
+            ILogger logger)  
+        { 
             FormsAuth = formsAuth ?? new FormsAuthenticationService();
             MembershipService = service ?? new AccountMembershipService();
             Logger = logger ?? new Logger.Logger();
-            PaypalService = paypalService ?? new PaypalService();
-            Encryptor = encryptor ?? new Encryptor(ConfigurationManager.AppSettings["AESKey"] == null ? String.Empty : ConfigurationManager.AppSettings["AESKey"].ToString());
         }
         
         public IFormsAuthentication FormsAuth
@@ -63,23 +57,10 @@ namespace HorseLeague.Controllers
             get;
             private set;
         }
-
-        public IPaypalService PaypalService
-        {
-            get;
-            private set;
-        }
-
-        public IEncryptor Encryptor
-        {
-            get;
-            private set;
-        }
-
+        
         #region LogOn
         public ActionResult LogOn()
         {
-
             return View();
         }
 
@@ -285,12 +266,19 @@ namespace HorseLeague.Controllers
         #endregion
 
         #region Record Paid Status
+        [AcceptVerbs(HttpVerbs.Post)]
         [Transaction]
-        public ActionResult RecordPaidStatus(string paypalCallback)
+        public ActionResult RecordPaidStatus(string paymentToken, string payerID, string paymentID)
         {
+            
+            return new JsonResult()
+            {
+                Data = new { msg = "fart" }
+            };
+            	/*
             try
             {
-                var paypalDTO = PaypalService.UnpackCallback(this.Encryptor, paypalCallback);
+                var paypalDTO = PaypalService.UnpackCallback(this.Encryptor, "");
 
                 if (paypalDTO.IsValid)
                 {
@@ -315,6 +303,7 @@ namespace HorseLeague.Controllers
                     
             }
             return View();
+                 */
         }
         #endregion
 
@@ -465,6 +454,7 @@ namespace HorseLeague.Controllers
         string ResetPassword(string userName);
         MembershipUser GetUser(string userName);
         bool UpdatePaid(int userLeagueId, bool value);
+        void UpdatePaid(UserLeague userLeague);
         void UnlockUser(string userName);
         MembershipUserCollection FindUsersByEmail(string email);
     }
@@ -556,9 +546,14 @@ namespace HorseLeague.Controllers
             if (userLeague == null) return false;
 
             userLeague.HasPaid = value;
-            userLeagueRepository.SaveOrUpdate(userLeague);
+            this.UpdatePaid(userLeague);
         
             return true;
+        }
+
+        public void UpdatePaid(UserLeague userLeague)
+        {
+            userLeagueRepository.SaveOrUpdate(userLeague);
         }
 
         public void UnlockUser(string userName)

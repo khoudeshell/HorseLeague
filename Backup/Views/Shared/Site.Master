@@ -1,0 +1,78 @@
+<%@ Master Language="C#" AutoEventWireup="true" Inherits="System.Web.Mvc.ViewMasterPage" %>
+<%@ Import Namespace="Helpers" %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <asp:ContentPlaceHolder ID="head" runat="server">
+        <title>Triple Crown Royal</title>
+    </asp:ContentPlaceHolder>
+    <head>
+        <title>Triple Crown Royal</title>
+        <link href="../../Content/Site.css" rel="stylesheet" type="text/css" />
+        <LINK REL="apple-touch-icon-precomposed" HREF="../../Content/apple-touch-icon.png" />
+        <meta name="keywords" content="horse racing,horse,kentucky derby,belmont stakes,gambling,liquor,beer,keystone light,bourbon,gin,scotch,rum,loser,drinking,vomit" /> 
+        <script type="text/javascript">
+            var _gaq = _gaq || [];
+            _gaq.push(['_setAccount', 'UA-7783431-1']);
+            _gaq.push(['_trackPageview']);
+
+            (function () {
+                var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+                ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+                var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+            })();
+        </script>
+    </head>
+    <body>
+    <div class="page">
+
+        <div id="header">
+            <div id="title">
+                <img src="../../Content/triplecrownroyal.gif" alt="" class="logo"/>
+            </div>
+            
+            <div id="logindisplay">
+                <% Html.RenderPartial("LogOnUserControl");  %>
+            </div> 
+            
+            <div id="menucontainer">
+
+
+                <%-- The custom Html.MenuItem() helper is used to render each menu link --%>
+
+                <ul id="menu">              
+                    <li><%= Html.ActionLink("Home", "Index", "Home")%></li>
+                    <li><%= Html.ActionLink("Standings", "Index", "Standings")%></li>
+                    <li><%= Html.ActionLink("Results", "Index", "Results")%></li>
+                    <li><%= Html.ActionLink("Schedule", "Index", "Schedule")%></li>
+                </ul>
+
+
+            </div>
+
+            <%
+                if(HorseLeague.Views.Shared.UIFunctions.ShouldShowPurchaseButton(new HttpContextWrapper(this.Context)))
+                {
+            %>
+                    <div id="paypal">
+                        <form action="https://www.paypal.com/cgi-bin/webscr" method="post">
+                            <input type="hidden" name="cmd" value="_s-xclick">
+                            <input type="hidden" name="hosted_button_id" value="2PCWHRZQBK8RL">
+                            <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_buynow_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+                            <img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
+                        </form>
+                    </div>
+             <%
+                }
+             %>
+        </div>
+
+        <div id="main">
+            <asp:ContentPlaceHolder ID="MainContent" runat="server" />
+
+            <div id="footer">
+                Triple Crown Royal &copy; Copyright <%=DateTime.Now.Year.ToString() %>
+             </div>
+        </div>
+    </div>
+</body>
+</html>
