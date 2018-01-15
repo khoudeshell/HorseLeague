@@ -63,19 +63,35 @@ namespace HorseLeague.Views.Shared
 
             foreach (RaceDetail rd in raceDetails)
             {
-                item = new SelectListItem();
-                item.Text = FormatHorseNameForDisplay(rd.PostPosition, rd.Horse.Name);
-                item.Value = rd.Id.ToString();
-
-                if (selectionEval(rd))
-                {
-                    item.Selected = true;
-                }
-
-                items.Add(item);
+                items.Add(CreateListItem(FormatHorseNameForDisplay(rd.PostPosition, rd.Horse.Name), 
+                    rd.Id.ToString(), () => {
+                        return selectionEval(rd);
+                }));
             }
 
             return items;
+        }
+
+        public static SelectList GetSelectListFromEnum<TEnum>(TEnum selectedVal)
+            where TEnum : struct, IComparable, IFormattable, IConvertible
+        {
+            var values = from TEnum e in Enum.GetValues(typeof(TEnum))
+                            select new { Id = e, Name = e.ToString() };
+            return new SelectList(values, "Id", "Name", selectedVal);
+        }
+
+        public static SelectListItem CreateListItem(string name, string value, Func<bool> selectionEval)
+        {
+            SelectListItem item = new SelectListItem();
+            item.Text = name;
+            item.Value = value;
+
+            if (selectionEval())
+            {
+                item.Selected = true;
+            }
+
+            return item;
         }
 
         public static string FormatHorseNameForDisplay(int postPosition, string horseName)

@@ -453,7 +453,6 @@ namespace HorseLeague.Controllers
         bool ChangePassword(string userName, string oldPassword, string newPassword);
         string ResetPassword(string userName);
         MembershipUser GetUser(string userName);
-        bool UpdatePaid(int userLeagueId, bool value);
         void UpdatePaid(UserLeague userLeague);
         void UnlockUser(string userName);
         MembershipUserCollection FindUsersByEmail(string email);
@@ -537,18 +536,6 @@ namespace HorseLeague.Controllers
             int countOfUsers;
             
             return _provider.FindUsersByEmail(email, 0, 100, out countOfUsers);
-        }
-
-        public bool UpdatePaid(int userLeagueId, bool value)
-        {
-            var userLeague = userLeagueRepository.Get(userLeagueId);
-
-            if (userLeague == null) return false;
-
-            userLeague.HasPaid = value;
-            this.UpdatePaid(userLeague);
-        
-            return true;
         }
 
         public void UpdatePaid(UserLeague userLeague)

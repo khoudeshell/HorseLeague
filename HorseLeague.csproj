@@ -296,7 +296,7 @@
     <Content Include="Views\Standings\Details.aspx" />
     <Content Include="Views\Standings\Index.aspx" />
     <Content Include="Views\Users\Index.aspx" />
-    <Content Include="Views\Users\View.aspx" />
+    <Content Include="Views\Users\User.aspx" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>

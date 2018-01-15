@@ -24,7 +24,7 @@
            { %>    
                 <tr>
                     <td><%=i%>.</td>
-                    <td><%=Html.ActionLink(Html.Encode(user.UserName), "View", "Users", new { userName = user.UserName }, null)  %></td>
+                    <td><%=Html.ActionLink(Html.Encode(user.UserName), "User", "Users", new { userName = user.UserName }, null)  %></td>
                     <td><%=user.HasPaid %></td>
                 </tr>
         <% i++;

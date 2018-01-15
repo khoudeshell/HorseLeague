@@ -8,11 +8,17 @@ using System.Text;
 namespace HorseLeague.Models.Domain
 {
     public class UserLeague : Entity
-    { 
+    {
+        public enum PaymentTypes { NotPaid, PayPal, Check, Cash,  };
+
         public virtual IList<UserRaceDetail> UserRaceDetails { get; set; }
         public virtual User User { get; set; }
         public virtual League League { get; set; }
         public virtual bool? HasPaid { get; set; }
+        public virtual PaymentTypes? PaymentType { get; set; }
+        public virtual string PayPalPaymentToken { get; set; }
+        public virtual string PayPalPayerId { get; set; }
+        public virtual string PayPalPaymentId { get; set; }
 
         public virtual bool HasValidRaceCondition(LeagueRace leagueRace)
         {

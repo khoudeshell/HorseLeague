@@ -15,6 +15,10 @@ namespace HorseLeague.Models.DataAccess.Mapping
             Id(x => x.Id, "UserLeagueId");
 
             Map(x => x.HasPaid);
+            Map(x => x.PaymentType);
+            Map(x => x.PayPalPayerId);
+            Map(x => x.PayPalPaymentId);
+            Map(x => x.PayPalPaymentToken);
 
             References<User>(x => x.User)
                 .Column("UserId")

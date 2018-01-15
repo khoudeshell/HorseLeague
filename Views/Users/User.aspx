@@ -41,30 +41,45 @@
             </ul>
         </p>
     </fieldset>
-
+    
+    <%= Html.ValidationSummary() %>
+    <% 
+        using (Html.BeginForm()) {
+    %>
     <fieldset>
         <legend>Leagues</legend>
-
         <table>
             <tr>
                 <th>League Id</th>
                 <th>UL Id</th>
                 <th>Has Paid</th>
-                <th>Action</th>
+                <th>Payment Type</th>
+                <th>PayPal Payer</th>
+                <th>PayPal Id</th>
+                <th>PayPal Token</th>                
             </tr>
-        <%foreach(var userLeague in this.Model.UserLeagues)
-          {
-         %>
-            <tr>
-                <td><%=userLeague.League.Id %></td>
-                <td><%=userLeague.Id %></td>
-                <td><%=userLeague.HasPaid %></td>
-                <td><%=Html.ActionLink("Flip Pay Status", "SetPayStatus", new { userName = name, userLeagueId = userLeague.Id, payStatus = !userLeague.HasPaid }) %></td> </tr>
-        <%
-          }
-          %>
-
-          </table>
+            <%foreach(var userLeague in this.Model.UserLeagues)
+             {
+            %>
+                <tr>
+                    <td><%=userLeague.League.Id %><%=Html.Hidden("txtLeagueId", userLeague.League.Id) %></td>
+                    <td><%=userLeague.Id %><%=Html.Hidden("txtUserLeagueId", userLeague.Id) %></td>
+                    <td><%=Html.CheckBox("chkHasPaid", userLeague.HasPaid.GetValueOrDefault(false)) %></td>
+                    <td><%=Html.DropDownList("cmbPaymentType", 
+                        UIFunctions.GetSelectListFromEnum<UserLeague.PaymentTypes>(userLeague.PaymentType.GetValueOrDefault(UserLeague.PaymentTypes.NotPaid))) %>
+                    </td>
+                    <td><%=Html.TextBox("txtPayPalPayer", userLeague.PayPalPayerId) %></td> 
+                    <td><%=Html.TextBox("txtPayPalId", userLeague.PayPalPaymentId) %></td> 
+                    <td><%=Html.TextBox("txtPayPalToken", userLeague.PayPalPaymentToken) %></td> 
+                </tr>
+            <%
+            }
+            %>   
+        </table>
+        <p>
+           <input type="submit" value="Save" />
+        </p>
+    <% } %>
     </fieldset>
     
 
