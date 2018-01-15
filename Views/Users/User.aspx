@@ -23,7 +23,14 @@
 
         <p>Locked Status: <%=this.Model.SecurityUser.IsLockedOut.ToString() %> </p>
 
-        <p>Last Activity Date: <%= this.Model.SecurityUser.LastActivityDate.ToString() %></p>
+        <p>Last Activity Date: 
+            <% 
+                var est = TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time");
+                var targetTime = TimeZoneInfo.ConvertTime(this.Model.SecurityUser.LastActivityDate, est);
+             %>
+             <%=targetTime.ToString() %>
+
+        </p>
         
         <p>Account Actions: 
             <ul>
