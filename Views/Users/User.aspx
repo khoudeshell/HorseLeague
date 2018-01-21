@@ -59,7 +59,6 @@
             <tr>
                 <th>League Id</th>
                 <th>UL Id</th>
-                <th>Has Paid</th>
                 <th>Payment Type</th>
                 <th>PayPal Payer</th>
                 <th>PayPal Id</th>
@@ -71,7 +70,6 @@
                 <tr>
                     <td><%=userLeague.League.Id %><%=Html.Hidden("txtLeagueId", userLeague.League.Id) %></td>
                     <td><%=userLeague.Id %><%=Html.Hidden("txtUserLeagueId", userLeague.Id) %></td>
-                    <td><%=Html.CheckBox("chkHasPaid", userLeague.HasPaid.GetValueOrDefault(false)) %></td>
                     <td><%=Html.DropDownList("cmbPaymentType", 
                         UIFunctions.GetSelectListFromEnum<UserLeague.PaymentTypes>(userLeague.PaymentType.GetValueOrDefault(UserLeague.PaymentTypes.NotPaid))) %>
                     </td>

@@ -25,6 +25,12 @@ namespace HorseLeague.Controllers
             
              return View();
          }
+         public ActionResult LogsByUser(string userName)
+         {
+             this.ViewData["Logs"] = this.logRepository.GetAll().Where(x => x.User == userName).OrderByDescending(x => x.Date).Take(50).ToList();
+
+             return View("Index");
+         }
 
     }
 }

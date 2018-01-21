@@ -5,6 +5,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using HorseLeague.Models.Domain;
+using HorseLeague.Models.DataAccess;
 
 
 namespace HorseLeague.Controllers
@@ -12,17 +13,56 @@ namespace HorseLeague.Controllers
     public class UsersController : HorseLeagueController
     {
          private readonly IMembershipService membershipService;
-         public UsersController(IMembershipService membershipService) : base()
+         private readonly IUserReportRepository userReportRepository;
+
+         public UsersController(IMembershipService membershipService, IUserReportRepository userReportRepository)
+             : base()
          {
              this.membershipService = membershipService;
+             this.userReportRepository = userReportRepository;
          }
 
          [Authorize(Users = "kurt,stephanie")]
          public ActionResult Index()
          {
-             this.ViewData["Users"] = this.UserRepository.GetAll();
+             this.ViewData["Users"] = getAllUsers()
+                 .Where(x => x.LastActivityDate > DateTime.Now.AddYears(-1));
             
              return View();
+         }
+
+         [Authorize(Users = "kurt,stephanie")]
+         public ActionResult GetAll()
+         {
+             this.ViewData["Users"] = getAllUsers()
+                 .OrderBy(x => x.UserName);
+
+             return View("Index");
+         }
+
+         [Authorize(Users = "kurt,stephanie")]
+         public ActionResult Unpaid()
+         {
+             this.ViewData["Users"] = getAllUsers()
+                 .Where(x => x.HasPaid == false)
+                 .OrderBy(x => x.UserName);
+
+             return View("Index");
+         }
+
+         [Authorize(Users = "kurt,stephanie")]
+         public ActionResult Activity()
+         {
+             this.ViewData["Users"] = getAllUsers()
+                 .Where(x => x.LastActivityDate > DateTime.Now.AddYears(-1))
+                 .OrderByDescending(x => x.LastActivityDate);
+
+             return View("Index");
+         }
+
+         private IList<UserReport> getAllUsers() 
+         {
+             return this.userReportRepository.GetAllUsers(null);
          }
 
          [Authorize(Users = "kurt,stephanie")]
@@ -44,22 +84,21 @@ namespace HorseLeague.Controllers
              var user = this.UserRepository.GetByUserName(userName);
              user.SecurityUser = this.membershipService.GetUser(userName);
              this.ViewData.Model = user;
+             bool? hasPaid = false;
              
              int userLeagueId = Convert.ToInt32(collection["txtUserLeagueId"]);
 
-             bool? hasPaid = collection["chkHasPaid"].Contains("true") ? true : false;
              UserLeague.PaymentTypes paymentType = (UserLeague.PaymentTypes)Enum.Parse(typeof(UserLeague.PaymentTypes), 
                  collection["cmbPaymentType"], true);
 
-             if((paymentType != UserLeague.PaymentTypes.NotPaid && !hasPaid.GetValueOrDefault(false)) ||
-                  (paymentType == UserLeague.PaymentTypes.NotPaid && hasPaid.GetValueOrDefault(false))) {
-                 ModelState.AddModelError("_FORM", "HasPaid and PaymentType are inconsistent.  They both need to reflect paying or not paying.");
-             
-                 return View();
+             if (paymentType != UserLeague.PaymentTypes.NotPaid)
+             {
+                 hasPaid = true;
              }
              var userLeague = user.UserLeagues.Where(ul => ul.Id == userLeagueId).SingleOrDefault();
 
-             updateUserPayment(userLeague, hasPaid, paymentType, collection["txtPayPalToken"], collection["txtPayPalPayer"], collection["txtPayPalId"]);
+             updateUserPayment(userLeague, hasPaid, paymentType, collection["txtPayPalToken"], 
+                 collection["txtPayPalPayer"], collection["txtPayPalId"]);
                      
              return RedirectToAction("User", new { userName = userName });
          }

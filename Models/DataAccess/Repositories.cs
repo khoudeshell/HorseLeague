@@ -41,6 +41,28 @@ namespace HorseLeague.Models.DataAccess
         }
     }
 
+    public class UserReportRepository : Repository<UserReport>, HorseLeague.Models.DataAccess.IUserReportRepository
+    {
+        public IList<UserReport> GetAllUsers(DateTime? activityDate)
+        {
+            string sql;
+
+            sql = @"SELECT  ul.UserId as 'Id', a.UserName, u.email as 'Email', HasPaid, a.LastActivityDate
+                FROM .[UserLeague] ul
+	            INNER JOIN aspnet_membership u on ul.UserId = u.UserId
+	            INNER JOIN aspnet_Users a on a.UserId = ul.UserId ";
+
+            var query = this.Session.CreateSQLQuery(sql)
+                .SetResultTransformer(NHibernate.Transform.Transformers.AliasToBean(typeof(UserReport)))
+                .List<UserReport>();
+            
+            if (query == null)
+                query = new List<UserReport>();
+
+            return query;
+
+        }
+    }
     public class LeagueRepository : Repository<League>, ILeagueRepository 
     {
         public void RecalculateStandings(League league)
@@ -99,5 +121,10 @@ namespace HorseLeague.Models.DataAccess
     public interface IHorseRepository : IHorseLeagueRepository<Horse>
     {
         Horse GetHorseByName(string horseName);
+    }
+
+    public interface IUserReportRepository
+    {
+        IList<UserReport> GetAllUsers(DateTime? activityDate);
     }
 }

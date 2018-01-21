@@ -241,6 +241,7 @@
     <Compile Include="Models\Domain\UserLeague.cs" />
     <Compile Include="Models\Domain\UserRaceDetail.cs" />
     <Compile Include="Models\Domain\UserRaceExoticPayout.cs" />
+    <Compile Include="Models\Domain\UserReport.cs" />
     <Compile Include="Models\Domain\UserStandings.cs" />
     <Compile Include="Models\Enums.cs" />
     <Compile Include="Models\Calculator.cs" />
