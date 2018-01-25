@@ -100,7 +100,12 @@ namespace HorseLeague
             Exception ex = Server.GetLastError();
             ReflectionTypeLoadException reflectionTypeLoadException = ex as ReflectionTypeLoadException;
 
-            if (!ex.Message.ToLower().Contains("php") && !ex.Message.ToLower().Contains("htm"))
+            if (!ex.Message.ToLower().Contains("php") && 
+                !ex.Message.ToLower().Contains("htm") &&
+                !ex.Message.ToLower().Contains("changelog.txt") &&
+                !ex.Message.ToLower().Contains("sftp") &&
+                !ex.Message.ToLower().Contains("apple-touch-icon-") && 
+                !ex.Message.ToLower().Contains("sitemap.xml"))
             {
                 new Logger.Logger().LogError("Unhandled error", ex);
             }
