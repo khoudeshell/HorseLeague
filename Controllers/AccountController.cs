@@ -15,6 +15,7 @@ using HorseLeague.Logger;
 using System.Configuration;
 using SharpArch.Core.PersistenceSupport;
 using HorseLeague.Email;
+using HorseLeague.Services;
 
 namespace HorseLeague.Controllers
 {
@@ -27,17 +28,18 @@ namespace HorseLeague.Controllers
         // the default forms authentication and membership providers.
 
         public AccountController()
-            : this(null, null, null) { }
+            : this(null, null, null, null) { }
 
         // This constructor is not used by the MVC framework but is instead provided for ease
         // of unit testing this type. See the comments at the end of this file for more
         // information.
-        public AccountController(IFormsAuthentication formsAuth, IMembershipService service,
-            ILogger logger)  
+        public AccountController(IFormsAuthentication formsAuth, IMembershipService service, 
+            ILogger logger, ICaptchaService capthcaService)  
         { 
             FormsAuth = formsAuth ?? new FormsAuthenticationService();
             MembershipService = service ?? new AccountMembershipService();
             Logger = logger ?? new Logger.Logger();
+            CaptchaSvc = capthcaService ?? new CaptchaService();
         }
         
         public IFormsAuthentication FormsAuth
@@ -57,7 +59,11 @@ namespace HorseLeague.Controllers
             get;
             private set;
         }
-        
+        public ICaptchaService CaptchaSvc
+        {
+            get;
+            private set;
+        }
         #region LogOn
         public ActionResult LogOn()
         {
@@ -112,12 +118,12 @@ namespace HorseLeague.Controllers
 
         [AcceptVerbs(HttpVerbs.Post)]
         [Transaction]
-        public ActionResult Register(string userName, string email, string password, string confirmPassword)
+        public ActionResult Register(string userName, string email, string password, string confirmPassword, FormCollection items)
         {
 
             ViewData["PasswordLength"] = MembershipService.MinPasswordLength;
 
-            if (ValidateRegistration(userName, email, password, confirmPassword))
+            if (ValidateRegistration(userName, email, password, confirmPassword, items["g-recaptcha-response"]))
             {
                 // Attempt to register the user
                 MembershipCreateStatus createStatus = MembershipService.CreateUser(userName, password, email);
@@ -265,47 +271,6 @@ namespace HorseLeague.Controllers
         }
         #endregion
 
-        #region Record Paid Status
-        [AcceptVerbs(HttpVerbs.Post)]
-        [Transaction]
-        public ActionResult RecordPaidStatus(string paymentToken, string payerID, string paymentID)
-        {
-            
-            return new JsonResult()
-            {
-                Data = new { msg = "fart" }
-            };
-            	/*
-            try
-            {
-                var paypalDTO = PaypalService.UnpackCallback(this.Encryptor, "");
-
-                if (paypalDTO.IsValid)
-                {
-                    if (!this.MembershipService.UpdatePaid(paypalDTO.ParsedUserLeagueId, true))
-                    {
-                        Logger.LogInfo("Updating user as paid: " + paypalDTO.UserLeagueId);
-                        ModelState.AddModelError("_FORM", "The user was not found.");
-                        Logger.LogInfo("Did not register paypal callback for user league id: " + paypalDTO.ParsedUserLeagueId.ToString());
-                    }
-                }
-                else
-                {
-                    ModelState.AddModelError("_FORM", "The paypal return link was either invalid or expired.");
-                    Logger.LogInfo(String.Format("The paypal return link was either invalid or expired. UserLeagueId: {0} ExpirationDate: {1}",
-                        paypalDTO.UserLeagueId, paypalDTO.LinkDate));
-                }
-            }
-            catch(Exception e)
-            {
-                Logger.LogError("Error recording paypal info", e);
-                ModelState.AddModelError("_FORM", "The paypal return link was invalid.");
-                    
-            }
-            return View();
-                 */
-        }
-        #endregion
 
         protected override void OnActionExecuting(ActionExecutingContext filterContext)
         {
@@ -353,11 +318,11 @@ namespace HorseLeague.Controllers
             {
                 ModelState.AddModelError("_FORM", "The username or password provided is incorrect.");
             }
-
+           
             return ModelState.IsValid;
         }
 
-        private bool ValidateRegistration(string userName, string email, string password, string confirmPassword)
+        private bool ValidateRegistration(string userName, string email, string password, string confirmPassword, string recaptcha)
         {
             if (String.IsNullOrEmpty(userName))
             {
@@ -377,6 +342,17 @@ namespace HorseLeague.Controllers
             if (!String.Equals(password, confirmPassword, StringComparison.Ordinal))
             {
                 ModelState.AddModelError("_FORM", "The new password and confirmation password do not match.");
+            }
+            if (String.IsNullOrEmpty(recaptcha))
+            {
+                ModelState.AddModelError("_FORM", "You must indicate that you are not a robot.");
+            }
+            else 
+            { 
+                if(!CaptchaSvc.IsValid(recaptcha))
+                {
+                    ModelState.AddModelError("_FORM", "According to google, you are a robot.");
+                }
             }
             return ModelState.IsValid;
         }

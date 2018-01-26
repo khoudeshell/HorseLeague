@@ -38,10 +38,12 @@
                     <%= Html.Password("confirmPassword") %>
                     <%= Html.ValidationMessage("confirmPassword") %>
                 </p>
+                <div class="g-recaptcha" data-sitekey="<%=ConfigurationManager.AppSettings["CaptchaKey"] %>"></div>     
                 <p>
                     <input type="submit" value="Register" />
                 </p>
             </fieldset>
+           
         </div>
     <% } %>
 </asp:Content>

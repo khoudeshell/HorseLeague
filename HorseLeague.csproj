@@ -247,6 +247,8 @@
     <Compile Include="Models\Calculator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Helpers\HTMLTableParser.cs" />
+    <Compile Include="Services\CaptchaService.cs" />
+    <Compile Include="Services\ICaptchaService.cs" />
     <Compile Include="Views\Shared\UIFunctions.cs" />
   </ItemGroup>
   <ItemGroup>
