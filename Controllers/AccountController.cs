@@ -76,7 +76,6 @@ namespace HorseLeague.Controllers
             Justification = "Needs to take same parameter type as Controller.Redirect()")]
         public ActionResult LogOn(string userName, string password, bool rememberMe, string returnUrl)
         {
-
             if (!ValidateLogOn(userName, password))
             {
                 ViewData["rememberMe"] = rememberMe;

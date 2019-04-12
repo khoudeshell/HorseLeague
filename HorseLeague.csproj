@@ -346,6 +346,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\web.config" />
+    <Content Include="packages.config" />
     <None Include="Properties\PublishProfiles\TCR.pubxml" />
     <None Include="Properties\PublishProfiles\TCR_old.pubxml" />
     <None Include="Properties\PublishProfiles\triplecrownroyal.com - FTP.pubxml" />

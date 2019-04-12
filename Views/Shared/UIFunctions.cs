@@ -61,7 +61,7 @@ namespace HorseLeague.Views.Shared
             item.Value = "-1";
             items.Add(item);
 
-            foreach (RaceDetail rd in raceDetails)
+            foreach (RaceDetail rd in raceDetails.OrderBy(rd => rd.PostPosition))
             {
                 items.Add(CreateListItem(FormatHorseNameForDisplay(rd.PostPosition, rd.Horse.Name), 
                     rd.Id.ToString(), () => {
