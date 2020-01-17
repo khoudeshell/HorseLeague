@@ -250,5 +250,10 @@ namespace HorseLeague.Views.Shared
         {
             return context.Items["USER"] as User;
         }
+
+        public static string GetFormUrl(string formName)
+        {
+            return "/file/get?filename=" + formName;
+        }
     }
 }

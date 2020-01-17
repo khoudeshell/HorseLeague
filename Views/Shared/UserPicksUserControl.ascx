@@ -8,7 +8,7 @@
         <table>
             <tr>
                 <td>Race:</td>
-                <td><a href="<%=this.Model.FormUrl %>" target="_blank"><%=Html.Encode(this.Model.Race.Name)%></a></td>
+                <td><a href="<%=UIFunctions.GetFormUrl(this.Model.FormUrl) %>" target="_blank"><%=Html.Encode(this.Model.Race.Name)%></a></td>
             </tr>
             <tr>
                 <td>Track:</td>

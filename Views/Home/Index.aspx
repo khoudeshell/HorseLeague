@@ -57,7 +57,7 @@
                         <td align="center"><%=Html.Encode(lr.Race.Track)%></td>
                         <td align="center"><%=lr.Weight%></td>
                         <td align="center"><%=lr.PostTimeEST%></td>
-                        <td align="center" class="table-cell-action"><a href="<%=lr.FormUrl %>" target="_blank">Get Past Performances</a> | <%= picksSelected == true ? Html.ActionLink("Update Picks", "Picks", new { id = lr.Id }) : Html.ActionLink("Set Picks", "Picks", new { id = lr.Id })%></td>
+                        <td align="center" class="table-cell-action"><a href="<%=HorseLeague.Views.Shared.UIFunctions.GetFormUrl(lr.FormUrl) %>" target="_blank">Get Past Performances</a> | <%= picksSelected == true ? Html.ActionLink("Update Picks", "Picks", new { id = lr.Id }) : Html.ActionLink("Set Picks", "Picks", new { id = lr.Id })%></td>
                     </tr>
             <% i++;
                     }
