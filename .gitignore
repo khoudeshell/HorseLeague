@@ -4,8 +4,6 @@ _UpgradeReport_Files/UpgradeReport.css
 _UpgradeReport_Files/UpgradeReport.xslt
 _UpgradeReport_Files/UpgradeReport_Minus.gif
 _UpgradeReport_Files/UpgradeReport_Plus.gif
-bin/HorseLeague.dll
-bin/HorseLeague.pdb
 Models/Domain/AdminUserLeagueRacePicksDomain.cs
 Content/bg-main-corner-sprite.zip
 obj/Debug/DesignTimeResolveAssemblyReferencesInput.cache
@@ -19,3 +17,29 @@ obj/*
 *.suo
 Scripts/HR League Schema.sql
 Scripts/2012 Schedule.sql
+*.pdf
+backup/*
+packages/*
+testresults/*
+content/themes/*
+Properties/PublishProfiles/TCR.pubxml.user
+Properties/PublishProfiles/TCR_old.pubxml.user
+Properties/PublishProfiles/triplecrownroyal.com - FTP.pubxml.user
+Properties/PublishProfiles/triplecrownroyal.com - Web Deploy.pubxml.user
+Properties/PublishProfiles/triplecrownroyal.pubxml.user
+Scripts/2018 Paypal.sql
+Scripts/_references.js
+Scripts/jquery-1.8.2.intellisense.js
+Scripts/jquery-1.8.2.js
+Scripts/jquery-1.8.2.min.js
+Scripts/jquery-ui-1.8.24.js
+Scripts/jquery-ui-1.8.24.min.js
+Scripts/jquery.unobtrusive-ajax.js
+Scripts/jquery.unobtrusive-ajax.min.js
+Scripts/jquery.validate.unobtrusive.js
+Scripts/jquery.validate.unobtrusive.min.js
+Scripts/knockout-2.2.0.debug.js
+Scripts/knockout-2.2.0.js
+Scripts/modernizr-2.6.2.js
+UpgradeLog.htm
+UpgradeLog2.htm
