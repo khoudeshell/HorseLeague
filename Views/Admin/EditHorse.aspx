@@ -27,7 +27,7 @@
             </p>
             <p>
                 <label for="OddsOrder">OddsOrder:</label>
-                <%= Html.TextBox("OddsOrder", this.Model.OddsOrder) %>
+                <%= Html.TextBox("OddsOrder", this.Model.LeagueRace.NextOddsOrder) %>
                 <%= Html.ValidationMessage("OddsOrder", "*") %>
             </p>
             <p>

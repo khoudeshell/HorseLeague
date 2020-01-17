@@ -147,6 +147,14 @@ namespace HorseLeague.Models.Domain
             }
         }
 
+        public virtual int NextOddsOrder
+        {
+            get
+            {
+                return this.RaceDetails.Max(rd => rd.OddsOrder) + 1;
+            }
+        }
+
         public virtual RaceDetailPayout GetFinishPosition(RaceDetail raceDetail)
         {
             if (Win.RaceDetail == raceDetail)
