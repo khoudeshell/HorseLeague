@@ -383,7 +383,7 @@ namespace HorseLeague.Controllers
             foreach (User user in users)
             {
                 UserLeague userLeague = user.GetUserLeague(this.UserLeague.League);
-                if (userLeague != null)
+                if (userLeague != null && userLeague.HasPaid == true)
                 {
                     foreach (LeagueRace leagueRace in userLeague.League.LeagueRaces)
                     {

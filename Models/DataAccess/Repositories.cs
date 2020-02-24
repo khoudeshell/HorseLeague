@@ -71,6 +71,7 @@ namespace HorseLeague.Models.DataAccess
             {
                 command.CommandText = "CalculateUserTotals";
                 command.CommandType = CommandType.StoredProcedure;
+                command.CommandTimeout = 0;
                 IDbDataParameter leagueId = command.CreateParameter();
                 leagueId.DbType = DbType.Int32;
                 leagueId.ParameterName = "@LeagueId";

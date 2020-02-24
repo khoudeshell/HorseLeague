@@ -17,7 +17,7 @@
                     <th>Weight</th>   
                 </tr>
             <% int i = 1;
-                foreach (HorseLeague.Models.Domain.LeagueRace lr in (IEnumerable)ViewData["ScheduledRaces"])
+                foreach (HorseLeague.Models.Domain.LeagueRace lr in ((IList<HorseLeague.Models.Domain.LeagueRace>)ViewData["ScheduledRaces"]).OrderBy(x => x.RaceDate))
                { %>    
                     <tr>
                         <td><%=i%>.</td>
