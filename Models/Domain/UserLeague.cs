@@ -25,39 +25,24 @@ namespace HorseLeague.Models.Domain
             return GetPicksForARace(leagueRace).Count > 0;
         }
 
-        public virtual bool IsValidRaceCondition(LeagueRace leagueRace)
+
+        public  virtual void AddUserPicksForRace(LeagueRace leagueRace, 
+            IList<UserRaceDetail> userPicks)
         {
-            var disPicks = (from dp in GetPicksForARaceQueryable(leagueRace)
-                            select dp.RaceDetail.Id).Distinct();
-
-            return disPicks.ToList().Count == 4; //There are 4 possible user entered bet types
-        }
-
-        public virtual void ClearUserPicks(LeagueRace leagueRace)
-        {
-            IList<UserRaceDetail> picks = this.GetPicksForARace(leagueRace);
-            foreach (UserRaceDetail urd in picks)
+            if(userPicks == null || userPicks.Count != 4)
             {
-                this.UserRaceDetails.Remove(urd);
+                throw new InvalidPicksForARaceException("There must be 4 picks entered.");
             }
-            
-        }
-
-        public virtual void AddUserPick(LeagueRace leagueRace, RaceDetail raceDetail, BetTypes betType)
-        {
-            var userPick = GetPicksForARace(leagueRace).Where(x => x.BetType == betType).FirstOrDefault();
-
-            if (userPick != null && userPick.RaceDetail != raceDetail)
+            else if(userPicks.Select(x => x.RaceDetail.Id).Distinct().ToList().Count != 4)
             {
-                this.UserRaceDetails.Remove(userPick);
+                throw new InvalidPicksForARaceException("There must be a separate horse for each bet type.");
             }
-            else if(userPick != null && userPick.RaceDetail == raceDetail)
-            {
-                return;
-            }
-            createAndAddUserRace(betType, raceDetail);
-        }
 
+            foreach(UserRaceDetail pick in userPicks)
+            {
+                addUserPickForARace(leagueRace, pick.RaceDetail, pick.BetType);
+            }
+        }
         public virtual bool HasUserSetPicksForRace(LeagueRace leagueRace)
         {
             return (from urd in UserRaceDetails
@@ -80,10 +65,53 @@ namespace HorseLeague.Models.Domain
 
             foreach (UserRaceDetail newPick in adjustedPicks)
             {
-                this.AddUserPick(leagueRace, newPick.RaceDetail, newPick.BetType);
+                this.addUserPickForARace(leagueRace, newPick.RaceDetail, newPick.BetType);
             }
 
             return adjustedPicks;
+        }
+
+        public virtual IList<UserRaceDetail> GetPicksForARace(LeagueRace leagueRace)
+        {
+            return getPicksForARaceQueryable(leagueRace).ToList<UserRaceDetail>();
+        }
+
+        public virtual bool WasExactaWinner(LeagueRace leagueRace)
+        {
+            RaceDetailPayout winner = leagueRace.Win;
+            RaceDetailPayout place = leagueRace.Place;
+
+            IList<UserRaceDetail> userRaceDetail = GetPicksForARace(leagueRace);
+            if (!this.HasValidRaceCondition(leagueRace))
+                return false;
+
+            return (winner.RaceDetail == userRaceDetail.Where(x => x.BetType == BetTypes.Win).FirstOrDefault().RaceDetail
+                && place.RaceDetail == userRaceDetail.Where(x => x.BetType == BetTypes.Place).FirstOrDefault().RaceDetail);
+        }
+
+        public virtual bool WasTrifectaWinner(LeagueRace leagueRace)
+        {
+            RaceDetailPayout show = leagueRace.Show;
+            IList<UserRaceDetail> userRaceDetail = GetPicksForARace(leagueRace);
+
+            return WasExactaWinner(leagueRace) &&
+                (show.RaceDetail == userRaceDetail.Where(x => x.BetType ==
+                    BetTypes.Show).FirstOrDefault().RaceDetail);
+        }
+
+        private void addUserPickForARace(LeagueRace leagueRace, RaceDetail raceDetail, BetTypes betType)
+        {
+            var userPick = GetPicksForARace(leagueRace).Where(x => x.BetType == betType).FirstOrDefault();
+
+            if (userPick != null && userPick.RaceDetail != raceDetail)
+            {
+                this.UserRaceDetails.Remove(userPick);
+            }
+            else if (userPick != null && userPick.RaceDetail == raceDetail)
+            {
+                return;
+            }
+            createAndAddUserRace(betType, raceDetail);
         }
 
         private void addRemainingPicks(LeagueRace leagueRace, IList<UserRaceDetail> adjustedPicks)
@@ -131,38 +159,11 @@ namespace HorseLeague.Models.Domain
                 counter++;
             }
         }
-        private IQueryable<UserRaceDetail> GetPicksForARaceQueryable(LeagueRace leagueRace)
+        private IQueryable<UserRaceDetail> getPicksForARaceQueryable(LeagueRace leagueRace)
         {
             return UserRaceDetails.Where(x => x.RaceDetail.LeagueRace == leagueRace).AsQueryable<UserRaceDetail>();
         }
 
-        public virtual IList<UserRaceDetail> GetPicksForARace(LeagueRace leagueRace)
-        {
-            return GetPicksForARaceQueryable(leagueRace).ToList<UserRaceDetail>();
-        }
-
-        public virtual bool WasExactaWinner(LeagueRace leagueRace)
-        {
-            RaceDetailPayout winner = leagueRace.Win;
-            RaceDetailPayout place = leagueRace.Place;
-
-            IList<UserRaceDetail> userRaceDetail = GetPicksForARace(leagueRace);
-            if(!this.HasValidRaceCondition(leagueRace))
-                return false;
-
-            return (winner.RaceDetail == userRaceDetail.Where(x => x.BetType == BetTypes.Win).FirstOrDefault().RaceDetail
-                && place.RaceDetail == userRaceDetail.Where(x => x.BetType == BetTypes.Place).FirstOrDefault().RaceDetail);
-        }
-
-        public virtual bool WasTrifectaWinner(LeagueRace leagueRace)
-        {
-            RaceDetailPayout show = leagueRace.Show;
-            IList<UserRaceDetail> userRaceDetail = GetPicksForARace(leagueRace);
-            
-            return WasExactaWinner(leagueRace) && 
-                (show.RaceDetail == userRaceDetail.Where(x => x.BetType == 
-                    BetTypes.Show).FirstOrDefault().RaceDetail);
-        }
 
         private void createAndAddUserRace(BetTypes betType, RaceDetail raceDetail)
         {
@@ -174,6 +175,7 @@ namespace HorseLeague.Models.Domain
             urd.UpdateDate = System.DateTime.Now;
 
             this.UserRaceDetails.Add(urd);
-        }       
+        }
+
     }
 }

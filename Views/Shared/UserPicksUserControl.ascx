@@ -30,7 +30,7 @@
     <% 
         using (Html.BeginForm()) {
             HorseLeague.Models.Domain.UserLeague userLeague = this.ViewData["UserDomain"] as HorseLeague.Models.Domain.UserLeague;
-            IList<HorseLeague.Models.Domain.UserRaceDetail> picks = userLeague.GetPicksForARace(this.Model);
+            IList<HorseLeague.Models.Domain.UserRaceDetail> picks = this.ViewData["UserPicks"] as IList<HorseLeague.Models.Domain.UserRaceDetail>;
     %>
         <fieldset>
             <legend>Picks</legend>

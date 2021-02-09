@@ -196,6 +196,7 @@
     </Compile>
     <Compile Include="Email\Emailer.cs" />
     <Compile Include="Models\DataAccess\Mapping\LogsMap.cs" />
+    <Compile Include="Models\Domain\Exceptions.cs" />
     <Compile Include="Models\Domain\LogItem.cs" />
     <Compile Include="Helpers\IHTMLTableParser.cs" />
     <Compile Include="Helpers\MenuItemHelper.cs" />

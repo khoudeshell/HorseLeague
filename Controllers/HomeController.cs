@@ -54,6 +54,7 @@ namespace HorseLeague.Controllers
             LeagueRace leagueRace = this.UserLeague.League.GetLeagueRace(id);
             this.ViewData.Model = leagueRace;
             this.ViewData["UserDomain"] = this.UserLeague;
+            this.ViewData["UserPicks"] = this.UserLeague.GetPicksForARace(leagueRace);
 
             return View(); 
         }
@@ -67,6 +68,9 @@ namespace HorseLeague.Controllers
                 getFormCollection(collection)));
 
             LeagueRace leagueRace = this.UserLeague.League.GetLeagueRace(id);
+            this.ViewData.Model = leagueRace;
+            this.ViewData["UserDomain"] = this.UserLeague;
+            this.ViewData["UserPicks"] = new List<UserRaceDetail>();
 
             if (!leagueRace.IsUpdateable)
             {
@@ -74,28 +78,32 @@ namespace HorseLeague.Controllers
                 return View();
             }
 
-            this.UserLeague.AddUserPick(leagueRace,
-                leagueRace.RaceDetails.Where(x => x.Id == Convert.ToInt32(collection["cmbWin"])).First(),
-                BetTypes.Win);
-            this.UserLeague.AddUserPick(leagueRace,
-                leagueRace.RaceDetails.Where(x => x.Id == Convert.ToInt32(collection["cmbPlace"])).First(),
-                BetTypes.Place);
-            this.UserLeague.AddUserPick(leagueRace,
-                leagueRace.RaceDetails.Where(x => x.Id == Convert.ToInt32(collection["cmbShow"])).First(),
-                BetTypes.Show);
-            this.UserLeague.AddUserPick(leagueRace,
-                leagueRace.RaceDetails.Where(x => x.Id == Convert.ToInt32(collection["cmbBackUp"])).First(),
-                BetTypes.Backup);
-            this.ViewData.Model = leagueRace;
-            this.ViewData["UserDomain"] = this.UserLeague;
-
-            if (!this.UserLeague.IsValidRaceCondition(leagueRace))
+            IList<UserRaceDetail> userSelections = new
+                    List<UserRaceDetail>();
+            try
             {
-                ModelState.AddModelError("_FORM", "Put a separate horse for each bet type");
+                parseUserPicksRequest(leagueRace, userSelections, collection);
+
+                this.UserLeague.AddUserPicksForRace(leagueRace, userSelections);
+            }
+            catch(InvalidPicksForARaceException ex)
+            {
+                //The temporary picks need to be put in there so they arent lost on the return page
+                this.ViewData["UserPicks"] = userSelections;
+
+                ModelState.AddModelError("_FORM", ex.Message);
+                ModelState.AddModelError("_FORM", "All picks must be entered for the race.");
+                foreach (string dropDown in ex.MissingPicks)
+                {
+                    ModelState.AddModelError(dropDown, string.Format("{0} must have a selection",
+                        dropDown.Replace("cmb", "")));
+                }
+
                 return View();
             }
-
+            
             this.userLeagueRepository.SaveOrUpdate(this.UserLeague);
+            this.ViewData["UserPicks"] = this.UserLeague.GetPicksForARace(leagueRace);
             this.ViewData["SuccessMessage"] = "Picks updated successfully";
             Logger.LogInfo(string.Format("Saved picks for User: {0}", this.User.Identity.Name));
 
@@ -103,6 +111,40 @@ namespace HorseLeague.Controllers
                 membershipService.GetUser(this.HorseUser.UserName).Email);
 
             return View();
+        }
+
+        private void parseUserPicksRequest(LeagueRace leagueRace, IList<UserRaceDetail> userSelections, FormCollection collection)
+        {
+            InvalidPicksForARaceException invalidPicks = new InvalidPicksForARaceException();
+
+            parseUserPickRequest(leagueRace, userSelections, collection, "cmbWin", BetTypes.Win, invalidPicks);
+            parseUserPickRequest(leagueRace, userSelections, collection, "cmbPlace", BetTypes.Place, invalidPicks);
+            parseUserPickRequest(leagueRace, userSelections, collection, "cmbShow", BetTypes.Show, invalidPicks);
+            parseUserPickRequest(leagueRace, userSelections, collection, "cmbBackUp", BetTypes.Backup, invalidPicks);
+
+            if (invalidPicks.MissingPicks.Count > 0) throw invalidPicks;
+        }
+
+        private void parseUserPickRequest(LeagueRace leagueRace, IList<UserRaceDetail> userSelections, FormCollection collection, 
+            string dropDown, BetTypes betTypes, InvalidPicksForARaceException invalidPicks)
+        {
+            int raceDetailId = Convert.ToInt32(collection[dropDown]);
+            
+            if (raceDetailId == -1)
+            {
+                invalidPicks.MissingPicks.Add(dropDown);
+            }
+            else
+            {
+                UserRaceDetail urd = new UserRaceDetail()
+                {
+                    BetType = betTypes,
+                    RaceDetail = leagueRace.RaceDetails.Where(x => x.Id == raceDetailId).First(),
+                    UserLeague = this.UserLeague,
+                    UpdateDate = DateTime.Now
+                };
+                userSelections.Add(urd);
+            }
         }
 
         private string getFormCollection(FormCollection collection)
