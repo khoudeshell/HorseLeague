@@ -66,7 +66,9 @@ namespace HorseLeague.Controllers
          }
 
          [Authorize(Users = "kurt,stephanie")]
+#pragma warning disable CS0108 // 'UsersController.User(string)' hides inherited member 'Controller.User'. Use the new keyword if hiding was intended.
          public ActionResult User(string userName)
+#pragma warning restore CS0108 // 'UsersController.User(string)' hides inherited member 'Controller.User'. Use the new keyword if hiding was intended.
          {
              var user = this.UserRepository.GetByUserName(userName);
              user.SecurityUser = this.membershipService.GetUser(userName);
@@ -79,7 +81,9 @@ namespace HorseLeague.Controllers
          [Authorize(Users = "kurt,stephanie")]
          [AcceptVerbs(HttpVerbs.Post)]
          [Transaction]
+#pragma warning disable CS0108 // 'UsersController.User(string, FormCollection)' hides inherited member 'Controller.User'. Use the new keyword if hiding was intended.
          public ActionResult User(string userName, FormCollection collection)
+#pragma warning restore CS0108 // 'UsersController.User(string, FormCollection)' hides inherited member 'Controller.User'. Use the new keyword if hiding was intended.
          {
              var user = this.UserRepository.GetByUserName(userName);
              user.SecurityUser = this.membershipService.GetUser(userName);
