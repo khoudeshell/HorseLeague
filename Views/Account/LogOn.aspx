@@ -5,7 +5,7 @@
 </asp:Content>
 
 <asp:Content ID="loginContent" ContentPlaceHolderID="MainContent" runat="server">
-    <div class="announcement">2021 Season begins on Feb 27th!</div>
+    <div class="announcement">2022 Season begins on Feb 5th!</div>
     <h2>Log On</h2>
     <p>
         Please enter your username and password. <%= Html.ActionLink("Register", "Register") %> if you don't have an account.
